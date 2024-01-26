@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Header with Bootstrap styles -->
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="text-center">Admin Dashboard</h1>
+        </div>
+    </header>
+
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+        <div class="container">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/guest_registration">Guest Registration</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin_dashboard">Admin Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/employee_dashboard">Employee Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
+                <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
+                <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Welcome, Admin</h2>
+        {% if message %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+        {% endif %}
+        <!-- Database Management Section -->
+        
+
+        <!-- Report Generation Section -->
+        <section id="report-generation" class="mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Report Generation</h3>
+                    <!-- Report Generation Help Section -->
+                        <button class="btn btn-info mb-2" type="button" data-toggle="collapse" data-target="#helpReport" aria-expanded="false" aria-controls="helpReport">
+                            Report Generation Help
+                        </button>
+                        <div class="collapse" id="helpReport">
+                            <div class="card card-body">
+                                <strong>Generating Reports:</strong>
+                                <ul>
+                                    <li><strong>Download Reports:</strong> This feature lets you generate comprehensive reports about guest activities, payments, and more, which you can download for record-keeping and analysis.</li>
+                                    <li><strong>Benefits:</strong> The **.csv file is similar to excel File and helps in tracking event progress and making data-driven decisions.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    <form action="/generate-report-download" method="get">
+                        <button type="submit" class="btn btn-primary">Generate and Download Report</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Barcode Generation Section -->
+        <section id="barcode-generation" class="mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Barcode Generation</h3>
+                    <!-- Barcode Generation Help Section -->
+                        <button class="btn btn-info mb-2" type="button" data-toggle="collapse" data-target="#helpBarcode" aria-expanded="false" aria-controls="helpBarcode">
+                            Barcode Generation Help
+                        </button>
+                        <div class="collapse" id="helpBarcode">
+                            <div class="card card-body">
+                                <strong>Creating Barcodes:</strong>
+                                <ul>
+                                    <li><strong>Select User:</strong> Choose a user from the dropdown list to generate a unique barcode. This barcode can be used for quick identification and check-in at the event.</li>
+                                    <li><strong>Barcode Utility:</strong> Barcodes simplify the process of tracking guest attendance and accessing their details swiftly.</li>
+                                    <li><strong>Note : For Release of Batch of Entire Database Bar Codes, contact Administrator </strong></li>
+                                </ul>
+                            </div>
+                        </div>
+                    <form action="/generate-barcode" method="post">
+                        <div class="form-group">
+                            <label for="userSelect">Select User:</label>
+                            <select class="form-control" id="userSelect" name="user_id" required>
+                                <!-- Options will be populated by server-side logic -->
+                                {% for user in users %}
+                                    <option value="{{ user.ID }}">{{ user.Name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success">Generate Barcode</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <section id="database-management" class="mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Database Management</h3>
+                    <!-- Database Management Help Section -->
+                        <button class="btn btn-info mb-2" type="button" data-toggle="collapse" data-target="#helpDatabase" aria-expanded="false" aria-controls="helpDatabase">
+                            Database Management Help
+                        </button>
+                        <div class="collapse" id="helpDatabase">
+                            <div class="card card-body">
+                                <strong>Managing the Database:</strong>
+                                <ul>
+                                    <li><strong>Reset Database:</strong> This function allows you to reset the entire database to its default state. Be cautious as this action is irreversible and will erase all existing guest data.</li>
+                                    <li><strong>Admin Password:</strong> You must enter the correct admin password to proceed with the reset. This serves as a security measure to prevent accidental database resets.</li>
+                                    <li><strong>Use Case:</strong> Ideal for starting afresh or clearing test data before an actual event.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    <p>Reset the database to its default state. This action cannot be undone.</p>
+                    <form action="/delete-database" method="post">
+                        <div class="form-group">
+                            <label for="adminPassword">Admin Password for Database Reset:</label>
+                            <input type="password" class="form-control" id="adminPassword" name="password" placeholder="Enter Password" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Delete and Reset Database</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <!-- Blank div spacer -->
+        <div style="height: 3rem;"></div> <!-- Adjust the height as needed -->
+    </div>
+
+    <footer>
+        <div class="container text-center">
+            <button onclick="location.href='/'">Home</button>
+            <button onclick="location.href='/login'">Login Page</button>
+            <button>Help: +91-9899339005</button>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

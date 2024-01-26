@@ -1,0 +1,87 @@
+
+
+/* Header styles */
+header {
+    background-color: #343a40; /* Darker shade for a more modern look */
+    padding: 1rem 0; /* Adjusted padding */
+}
+
+/* Navbar styles */
+.navbar {
+    font-size: 1.5rem; /* Adjust font size as needed */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.navbar .nav-item {
+    color: #ffffff; /* Bright white */
+}
+
+.navbar .nav-link:hover {
+    color: rgba(255, 255, 255, 1); /* Solid white on hover/focus */
+}
+
+.navbar .nav-link:focus {
+    color: rgba(255, 255, 255, 1); /* Solid white on hover/focus */
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: #007bff; /* Shade of blue */
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav a {
+    color: #dc3545; /* Shade of red */
+    text-decoration: none;
+}
+
+
+.full-width-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-top: -1rem; /* Adjust this value as needed */
+    margin-bottom: -1rem; /* Adjust this value as needed */
+}
+
+
+
+
+footer {
+    background-color: #ffc107; /* Yellow */
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+button {
+    background-color: #28a745; /* Green for contrast */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}

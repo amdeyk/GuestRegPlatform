@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Barcode</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- QuaggaJS for barcode scanning -->
+    <script src="https://cdn.jsdelivr.net/npm/quagga@latest"></script>
+</head>
+<body>
+    <header>
+        <h1>Scan Barcode</h1>
+    </header>
+    <div class="container">
+        <!-- Area for displaying camera feed during scanning -->
+        <div id="scanner-container" style="width: 100%; height: 320px; margin-top: 15px;"></div>
+        
+        <!-- Button to start scanning -->
+        <button id="startScan" class="btn btn-info mt-3">Start Scanning</button>
+        
+        <!-- Display Guest Details Section -->
+        <section id="scanned-guest-details" class="mt-4" style="display: none;">
+            <!-- Dynamic content based on scanned barcode will be displayed here -->
+        </section>
+    </div>
+    <footer>
+        <button onclick="location.href='/view_guest'">Back to Guest Details</button>
+        <button onclick="location.href='/'">Home</button>
+    </footer>
+    <script src="/static/barcode-scanner.js"></script>
+</body>
+</html>

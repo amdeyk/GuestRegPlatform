@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Header with Bootstrap styles -->
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="text-center">Guest Registration</h1>
+        </div>
+    </header>
+
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+        <div class="container">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/guest_registration">Guest Registration</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin_dashboard">Admin Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/employee_dashboard">Employee Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
+                <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
+                <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        {% if message %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+        {% endif %}
+        <form action="/submit-guest-registration" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="guestName">Name:</label>
+                <input type="text" class="form-control" id="guestName" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="guestEmail">Email:</label>
+                <input type="email" class="form-control" id="guestEmail" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="guestPhone">Phone:</label>
+                <input type="tel" class="form-control" id="guestPhone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="checkIn">Check-In Date/Time:</label>
+                <input type="datetime-local" class="form-control" id="checkIn" name="check_in" required>
+            </div>
+            <div class="form-group">
+                <label for="checkOut">Check-Out Date/Time:</label>
+                <input type="datetime-local" class="form-control" id="checkOut" name="check_out" required>
+            </div>
+            <div class="form-group">
+                <label for="amountGiven">Amount Given (Optional):</label>
+                <input type="number" class="form-control" id="amountGiven" name="amount_given" value="1">
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+    <footer>
+        <button onclick="location.href='/'">Back to Home</button>
+        <button onclick="location.href='login.html'">Login Page</button>
+        <button>Help: +91-9899339005</button>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Updates</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/quagga@latest"></script>
+</head>
+<body>
+    <header class="bg-dark text-white py-3">
+        <div class="container text-center">
+            <h1>Barcode Scanning & Updates</h1>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+        <!-- Navigation Content -->
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Top Half for Camera and Guest Details -->
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Camera Feed Section -->
+                <div id="scanner-container" style="width: 570px; height: 480px;"></div>
+                <!-- Start Scanning Button -->
+                <button id="startScan" class="btn btn-primary mt-3">Start Scanning</button>
+            </div>
+            <div class="col-md-6">
+                <!-- Guest Details Display -->
+                <div id="scanned-guest-details" style="background-color: #f8f9fa; padding: 15px;">
+                    <!-- Guest Details will be displayed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Half for Update Buttons -->
+        <div class="mt-4">
+            <h3 class="text-center">Update Options</h3>
+            <div class="text-center">
+                <!-- Update Buttons with IDs -->
+                <button id="paymentUpdateButton" class="btn btn-success m-2">Payment Update</button>
+                <button id="checkinUpdateButton" class="btn btn-success m-2">Check-in Update</button>
+                <button id="giftUpdateButton" class="btn btn-success m-2">Gift Status Update</button>
+                <button id="lunchDay1Button" class="btn btn-success m-2">Lunch Day 1 Update</button>
+                <button id="dinnerDay1Button" class="btn btn-success m-2">Dinner Day 1 Update</button>
+                <button id="lunchDay2Button" class="btn btn-success m-2">Lunch Day 2 Update</button>
+                <button id="dinnerDay2Button" class="btn btn-success m-2">Dinner Day 2 Update</button>
+                <button id="lunchDay3Button" class="btn btn-success m-2">Lunch Day 3 Update</button>
+                <!-- Add more buttons as necessary -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <button onclick="location.href='/employee_dashboard'">Back to Employee Dashboard</button>
+        <button onclick="location.href='/'">Home</button>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- Add your barcode scanning JavaScript file -->
+    <!-- Custom Modal -->
+    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">Alert</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Message will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/barcode-scanner.js"></script>
+
+
+</body>
+</html>

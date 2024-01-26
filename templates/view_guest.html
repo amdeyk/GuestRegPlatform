@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Header with Bootstrap styles -->
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="text-center">View Guest Details</h1>
+        </div>
+    </header>
+    
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+        <div class="container">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/guest_registration">Guest Registration</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin_dashboard">Admin Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/employee_dashboard">Employee Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
+                <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
+                <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    
+
+    <div style="height: 3rem;"></div> <!-- Adjust the height as needed -->
+    <div class="container">
+        <!-- Collapsible User Guide/Help Section -->
+            <p>
+                <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#userGuideCollapse" aria-expanded="false" aria-controls="userGuideCollapse">
+                    Show User Guide
+                </button>
+            </p>
+            <div class="collapse" id="userGuideCollapse">
+                <div class="card card-body">
+                    <strong>Understanding the Guest Viewing Dashboard:</strong>
+                    <ul>
+                        <li>
+                            <strong>Guest ID Lookup:</strong> Enter a guest's ID to quickly find their detailed information. This feature streamlines the process of accessing individual guest records.
+                        </li>
+                        <li>
+                            <strong>Guest Details Display:</strong> Once a guest ID is submitted, this section provides comprehensive information including contact details and stay duration.
+                        </li>
+                        <li>
+                            <strong>Toggle and Refresh Guest List:</strong> Use these buttons to display or hide the complete guest list and refresh it to ensure you have the latest information.
+                        </li>
+                        <li>
+                            <strong>Barcode Scanning Access:</strong> This functionality speeds up guest data retrieval, especially useful during large events for quick check-ins.
+                        </li>
+                        <li>
+                            <strong>All Guests Overview:</strong> A complete list of guests is shown here. You can use the search field to filter the list by name, ID, or phone number.
+                        </li>
+                        <li>
+                            <strong>Interactive Table Search:</strong> Enhance your guest list navigation with real-time search capabilities, allowing for quick filtering based on your input.
+                        </li>
+                       
+                    </ul>
+                </div>
+            </div>
+        <form action="/fetch-guest-details" method="post">
+            <div class="form-group">
+                <label for="guestId">Enter Guest ID:</label>
+                <input type="text" class="form-control" id="guestId" name="guest_id" placeholder="Guest ID" required>
+            </div>
+            <button type="submit" class="btn btn-primary">View Details</button>
+        </form>
+
+        <!-- Guest Details Section -->
+        <section id="guest-details" class="mt-4">
+            {% if guest %}
+                <div class="card">
+                    <div class="card-header">
+                        Guest Information
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>ID:</strong> {{ guest.ID }}</li>
+                        <li class="list-group-item"><strong>Name:</strong> {{ guest.Name }}</li>
+                        <li class="list-group-item"><strong>Email:</strong> {{ guest.Email }}</li>
+                        <li class="list-group-item"><strong>Phone:</strong> {{ guest.Phone }}</li>
+                        <li class="list-group-item"><strong>Check-In:</strong> {{ guest.CheckIn }}</li>
+                        <li class="list-group-item"><strong>Check-Out:</strong> {{ guest.CheckOut }}</li>
+                    </ul>
+                </div>
+            {% else %}
+                <p>Guest details not found.</p>
+            {% endif %}
+        </section>
+
+        <!-- Button to Toggle Display of All Guests -->
+        <button id="toggle-guests-button" class="btn btn-secondary mt-3">Show All Guests</button>
+
+        <!-- Link Button to Refresh All Guests List -->
+        <a href="/view_guest" class="btn btn-secondary mt-3">Refresh All Guests</a>
+        <button onclick="location.href='/scan-barcode'" class="btn btn-info mt-3">Scan Barcode</button>
+        <!-- All Guests Section -->
+        <section id="all-guests">
+            <div class="container">
+                <!-- Search Field -->
+                <input type="text" id="searchInput" class="form-control my-3" placeholder="Search by Name, ID, or Phone">
+            
+                <!-- Table for Guest Details -->
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Check-In</th>
+                            <th>Check-Out</th>
+                        </tr>
+                    </thead>
+                    <tbody id="guestTableBody">
+                        {% for guest in guests %}
+                            <tr>
+                                <td>{{ guest.ID }}</td>
+                                <td>{{ guest.Name }}</td>
+                                <td>{{ guest.Email }}</td>
+                                <td>{{ guest.Phone }}</td>
+                                <td>{{ guest.CheckIn }}</td>
+                                <td>{{ guest.CheckOut }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+    </div>
+    <footer>
+        <button onclick="location.href='/'">Back to Home</button>
+        <button onclick="location.href='login.html'">Login Page</button>
+        <button>Help: +91-9899339005</button>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- JavaScript to Toggle Guests Section -->
+    <script>
+        document.getElementById('toggle-guests-button').addEventListener('click', function() {
+            var allGuestsSection = document.getElementById('all-guests');
+            if (allGuestsSection.style.display === 'none') {
+                allGuestsSection.style.display = 'block';
+                this.textContent = 'Hide All Guests';
+            } else {
+                allGuestsSection.style.display = 'none';
+                this.textContent = 'Show All Guests';
+            }
+        });
+    </script>
+    <script>
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("guestTableBody");
+            tr = table.getElementsByTagName("tr");
+    
+            // Loop through all table rows, and hide those that don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td");
+                if (td) {
+                    if (td[0].textContent.toUpperCase().indexOf(filter) > -1 || 
+                        td[1].textContent.toUpperCase().indexOf(filter) > -1 || 
+                        td[3].textContent.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }       
+            }
+        });
+    </script>
+    <script src="/static/barcode-scanner.js"></script>
+</body>
+</html>

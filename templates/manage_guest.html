@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conference Guest Management System</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    
+</head>
+<body>
+    <!-- Header with Bootstrap styles -->
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="text-center">Welcome to the Conference Guest Management System</h1>
+        </div>
+    </header>
+
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+        <div class="container">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/guest_registration">Guest Registration</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin_dashboard">Admin Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/employee_dashboard">Employee Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
+                <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
+                <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Manage Guest Activities</h2>
+        <p>
+                <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#userGuideCollapse" aria-expanded="false" aria-controls="userGuideCollapse">
+                    Show User Guide
+                </button>
+            </p>
+            <div class="collapse" id="userGuideCollapse">
+                <div class="card card-body">
+                    <strong>How to Use This Page:</strong>
+                    <ul>
+                        <li><strong>Guest Check-In Management:</strong> Click this button to navigate to the check-in management page. Here, you can update the status of guests as they arrive, ensuring that their attendance is accurately recorded.</li>
+                        <li><strong>Payment Status Tracking: </strong>Use this option to manage and confirm payment receipts. It helps in keeping track of financial transactions for each guest, making sure all payments are accounted for.</li>
+                        <li><strong>Gift Distribution Records: </strong> This button leads you to the gift management section. Here, you can record which guests have received their gifts, helping in efficiently managing and distributing gifts.</li>
+                        <li><strong>Car Service Management: </strong>Select this to update the status of car services provided to guests. Whether it's a rental or a shuttle service, this feature ensures that all transportation arrangements are tracked.</li>
+                        <li><strong>Meal Coupon Distribution: </strong>Head to this section to manage meal coupons. It allows you to distribute, track, and manage meal coupons for each day, ensuring all guests receive their entitled meals.</li>
+                        <li><strong>Simplified Guest Management: </strong>Each of these buttons is designed to streamline specific guest management tasks. By providing a centralized and organized way to handle different aspects of guest services, these tools help in enhancing the efficiency and effectiveness of event management.</li>
+                    </ul>
+                </div>
+            </div>
+        
+        <div class="row">
+            <!-- New Section with Buttons for Each Checkbox Page -->
+            <div class="container mt-4 text-center" id="guest-activities-section">
+                <div class="row">
+                    <!-- Button for Guest Check-in -->
+                    <div class="col-md-4 mb-2">
+                        <button onclick="location.href='/checkin'" class="btn btn-primary">Guest Check-in</button>
+                    </div>
+            
+                    <!-- Button for Payment Received -->
+                    <div class="col-md-4 mb-2">
+                        <button onclick="location.href='/payment_received'" class="btn btn-primary">Payment Received</button>
+                    </div>
+            
+                    <!-- Button for Gift Received -->
+                    <div class="col-md-4 mb-2">
+                        <button onclick="location.href='/gift'" class="btn btn-primary">Gift Received</button>
+                    </div>
+            
+                    <!-- Button for Car Received -->
+                    <div class="col-md-4 mb-2">
+                        <button onclick="location.href='/car_received'" class="btn btn-primary">Car Received</button>
+                    </div>
+            
+                    <!-- Button for Lunch Coupon Day 1 -->
+                    <div class="col-md-4 mb-2">
+                        <button onclick="location.href='/lunch_day1'" class="btn btn-primary">Lunch Coupon Day 1</button>
+                    </div>
+            
+                    <!-- Button for Dinner Coupon Day 1 -->
+                    <div class="col-md-4 mb-2">
+                        <button onclick="location.href='/dinner_day1'" class="btn btn-primary">Dinner Coupon Day 1</button>
+                    </div>
+            
+                    <!-- Button for Lunch Coupon Day 2 -->
+                    <div class="col-md-4 mb-2">
+                        <button onclick="location.href='/lunch_day2'" class="btn btn-primary">Lunch Coupon Day 2</button>
+                    </div>
+            
+                    <!-- Button for Dinner Coupon Day 2 -->
+                    <div class="col-md-4 mb-2">
+                        <button onclick="location.href='/dinner_day2'" class="btn btn-primary">Dinner Coupon Day 2</button>
+                    </div>
+            
+                    <!-- Button for Lunch Coupon Day 3 -->
+                    <div class="col-md-4 mb-2">
+                        <button onclick="location.href='/lunch_day3'" class="btn btn-primary">Lunch Coupon Day 3</button>
+                    </div>
+            
+                    <!-- Add additional buttons for other functionalities as needed -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <button onclick="location.href='/'">Home</button>
+        <button onclick="location.href='/login'">Login Page</button>
+        <button>Help: +91-9899339005</button>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
+

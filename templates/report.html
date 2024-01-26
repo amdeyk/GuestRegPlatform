@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Header with Bootstrap styles -->
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="text-center">Report Generation</h1>
+        </div>
+    </header>
+
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+        <div class="container">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/guest_registration">Guest Registration</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin_dashboard">Admin Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/employee_dashboard">Employee Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
+                <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
+                <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <h2>Reports Section</h2>
+        
+            <!-- Collapsible User Guide/Help Section -->
+        <p>
+            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#userGuideCollapse" aria-expanded="false" aria-controls="userGuideCollapse">
+                Show User Guide
+            </button>
+        </p>
+        <div class="collapse" id="userGuideCollapse">
+            <div class="card card-body">
+                <strong>How to Use:</strong>
+                <ul>
+                    <li>Choose a report type from the dropdown menu to see different kinds of information about our guests.</li>
+                    <li>Each report gives you specific details, like who has checked in, who has received a gift, or payment statuses.</li>
+                    <li>Simply select a report type and hit 'View Report' to see the latest information.</li>
+                    <li>Our reports are updated regularly, so you always have the latest information at your fingertips.</li>
+                    <li>Use the information in these reports to help manage guest activities and plan effectively.</li>
+                </ul>
+            </div>
+        </div>
+    
+    
+        <section id="report-selection" class="mb-4">
+            <form action="/generate-report" method="post">
+                <div class="form-group">
+                    <label for="reportType">Select Report Type:</label>
+                    <select class="form-control" id="reportType" name="report_type">
+                        <option value="guestInfo">Guest Information</option>
+                        <option value="paymentStatus">Payment Status</option>
+                        <option value="checkinStatus">Check-in Status</option>
+                        <option value="giftStatus">Gift Status</option>
+                        <option value="carStatus">Car Status</option>
+                        <option value="lunchDay1Status">Lunch Day 1</option>
+                        <option value="dinnerDay1Status">Dinner Day 1</option>
+                        <option value="lunchDay2Status">Lunch Day 2</option>
+                        <option value="dinnerDay2Status">Dinner Day 2</option>
+                        <option value="lunchDay3Status">Lunch Day 3</option>
+                        <!-- Add more report types as needed -->
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">View Report</button>
+            </form>
+        </section>
+
+        <!-- Section for Displaying Selected Report -->
+        <section id="report-display">
+            {% if report_data %}
+                <h3>Report: {{ report_type }}</h3>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            {% for key in report_data[0].keys() %}
+                                <th>{{ key }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in report_data %}
+                            <tr>
+                                {% for value in row.values() %}
+                                    <td>{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No report data available.</p>
+            {% endif %}
+        </section>
+    </div>
+    <footer>
+        <button onclick="location.href='/'">Back to Home</button>
+        <button onclick="location.href='login.html'">Login Page</button>
+        <button>Help: +91-9899339005</button>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
