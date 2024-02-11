@@ -26,6 +26,8 @@
                 <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
                 <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
                 <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
+                <!-- Add the guest_view link here -->
+                <li class="nav-item"><a class="nav-link" href="/guest_view">One Guest View</a></li>
             </ul>
         </div>
     </nav>
@@ -33,7 +35,8 @@
         {% if message %}
             <div class="alert alert-info" role="alert">{{ message }}</div>
         {% endif %}
-        <form action="/submit-guest-registration" method="post" enctype="multipart/form-data">
+        <h2 class="text-center mb-4">Guest Registration - Internal</h2>
+        <form action="/submit-guest-registration" method="post" enctype="application/x-www-form-urlencoded">
             <div class="form-group">
                 <label for="guestName">Name:</label>
                 <input type="text" class="form-control" id="guestName" name="name" required>
@@ -47,12 +50,31 @@
                 <input type="tel" class="form-control" id="guestPhone" name="phone" required>
             </div>
             <div class="form-group">
-                <label for="checkIn">Check-In Date/Time:</label>
-                <input type="datetime-local" class="form-control" id="checkIn" name="check_in" required>
+                <label>Type:</label>
+                <select class="form-control" id="guestType" name="type1" required>
+                    <option value="delegate">Delegate</option>
+                    <option value="faculty">Faculty</option>
+                    <option value="industry">Industry</option>
+                </select>
             </div>
+            
             <div class="form-group">
+                <label>Residential Status:</label>
+                <select class="form-control" id="residentialStatus" name="residential_status" required>
+                    <option value="residential">Residential</option>
+                    <option value="non_residential">Non-Residential</option>
+                </select>
+
+            </div>
+            
+            <div class="form-group" id="checkInGroup" style="display: none;">
+                <label for="checkIn">Check-In Date/Time:</label>
+                <input type="datetime-local" class="form-control" id="checkIn" name="check_in">
+            </div>
+            
+            <div class="form-group" id="checkOutGroup" style="display: none;">
                 <label for="checkOut">Check-Out Date/Time:</label>
-                <input type="datetime-local" class="form-control" id="checkOut" name="check_out" required>
+                <input type="datetime-local" class="form-control" id="checkOut" name="check_out">
             </div>
             <div class="form-group">
                 <label for="amountGiven">Amount Given (Optional):</label>
@@ -60,6 +82,7 @@
             </div>
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
+        <div style="height: 8rem;"></div> <!-- Adjust the height as needed -->
     </div>
     <footer>
         <button onclick="location.href='/'">Back to Home</button>
@@ -69,5 +92,46 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var guestTypeSelect = document.getElementById('guestType');
+            var residentialStatusSelect = document.getElementById('residentialStatus');
+            var checkInGroup = document.getElementById('checkInGroup');
+            var checkOutGroup = document.getElementById('checkOutGroup');
+            var amountGivenGroup = document.getElementById('amountGivenGroup');
+    
+            function handleTypeChange() {
+                var guestType = guestTypeSelect.value;
+                console.log('Guest Type Changed:', guestType);
+                // Additional logic based on guestType
+            }
+        
+            function handleResidentialStatusChange() {
+                var residentialStatus = residentialStatusSelect.value;
+                console.log('Residential Status Changed:', residentialStatus);
+        
+                if (residentialStatus === 'residential') {
+                    checkInGroup.style.display = 'block';
+                    checkOutGroup.style.display = 'block';
+                    amountGivenGroup.style.display = 'none';
+                } else {
+                    checkInGroup.style.display = 'none';
+                    checkOutGroup.style.display = 'none';
+                    amountGivenGroup.style.display = 'block';
+                }
+            }
+        
+            // Attach event listeners and initialize
+            if (guestTypeSelect) {
+                guestTypeSelect.addEventListener('change', handleTypeChange);
+            }
+            if (residentialStatusSelect) {
+                residentialStatusSelect.addEventListener('change', handleResidentialStatusChange);
+                // Initialize with default values
+                handleResidentialStatusChange(); // Call this function to set the initial state based on the default selected value of residentialStatus
+            }
+        });
+    </script>
+
 </body>
 </html>

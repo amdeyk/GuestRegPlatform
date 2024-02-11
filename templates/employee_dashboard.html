@@ -53,6 +53,8 @@
                 <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
                 <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
                 <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
+                <!-- Add the guest_view link here -->
+                <li class="nav-item"><a class="nav-link" href="/guest_view">One Guest View</a></li>
             </ul>
         </div>
     </nav>
@@ -140,6 +142,50 @@
                                 <input type="checkbox" class="form-check-input" id="lunchDay2Checkbox" name="isLunchDay2" {% if guest.IsLunchDay2 == "True" %} checked disabled {% endif %}>
                                 <label class="form-check-label" for="lunchDay2Checkbox">Lunch Coupon Day 2 Given</label>
                             </div>
+                            <div class="form-group">
+                                <label>Guest Type:</label>
+                                <select class="form-control" id="guestType" name="guestType" {{ 'disabled' if guest and (guest.IsFaculty == 'True' or guest.IsIndustry == 'True' or (guest.IsFaculty == 'False' and guest.IsIndustry == 'False')) }}>
+                                    <option value="">Select</option> <!-- Always available but not selectable after a choice is made -->
+                                    <option value="delegate" {% if guest and guest.IsFaculty == 'False' and guest.IsIndustry == 'False' %}selected{% elif not guest %}selected{% endif %}>Delegate</option>
+                                    <option value="faculty" {% if guest and guest.IsFaculty == 'True' %}selected{% endif %}>Faculty</option>
+                                    <option value="industry" {% if guest and guest.IsIndustry == 'True' %}selected{% endif %}>Industry</option>
+                                </select>
+
+
+                                <input type="hidden" name="IsFaculty" value="{% if guest.IsFaculty == 'True' %}True{% endif %}">
+                                <input type="hidden" name="IsIndustry" value="{% if guest.IsIndustry == 'True' %}True{% endif %}">
+                            </div>
+
+
+
+
+                            <div class="form-group">
+                                <label for="residentialStatus">Residential Status:</label>
+                                <select class="form-control" id="residentialStatus" name="residential_status">
+                                    <option value="">Select</option>
+                                    <option value="residential" {{ 'selected' if guest.IsResidential == 'True' }}>Residential</option>
+                                    <option value="non_residential" {{ 'selected' if guest.IsResidential == 'False' }}>Non-Residential</option>
+                                </select>
+                                
+                                <!-- Additional form fields related to residential status -->
+                                <div class="form-group" id="checkInGroup" style="display:none;">
+                                    <label for="checkIn">Check-In Date/Time:</label>
+                                    <input type="datetime-local" class="form-control" id="checkIn" name="check_in">
+                                </div>
+                                <div class="form-group" id="checkOutGroup" style="display:none;">
+                                    <label for="checkOut">Check-Out Date/Time:</label>
+                                    <input type="datetime-local" class="form-control" id="checkOut" name="check_out">
+                                </div>
+                                <div class="form-group" id="hotelNameGroup" style="display:none;">
+                                    <label for="hotelName">Hotel Name:</label>
+                                    <input type="text" class="form-control" id="hotelName" name="hotel_name">
+                                </div>
+                                
+                                <!-- Hidden input to preserve the residential status if the select is disabled -->
+                                <input type="hidden" id="IsResidentialValue" name="IsResidential" value="{{ guest.IsResidential }}">
+
+                            </div>
+
                         </div>
                 
                         <!-- Column 2 -->
@@ -155,6 +201,11 @@
                                 <input type="checkbox" class="form-check-input" id="carReceivedCheckbox" name="isCarReceived" {% if guest.IsCarReceived == "True" %} checked disabled {% endif %}>
                                 <label class="form-check-label" for="carReceivedCheckbox">Car Received</label>
                             </div>
+                            <div class="form-group">
+                                <label for="carNumber">Car Number:</label>
+                                <input type="text" class="form-control" id="carNumber" name="carNumber" value="{{ guest.CarNumber }}">
+                            </div>
+
                 
                             <!-- Meal Coupons Day 1 - Dinner -->
                             <div class="form-check large-checkbox">
@@ -209,5 +260,41 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script> 
+        document.addEventListener('DOMContentLoaded', function () {
+        var residentialStatusSelect = document.getElementById('residentialStatus');
+        var checkInGroup = document.getElementById('checkInGroup');
+        var checkOutGroup = document.getElementById('checkOutGroup');
+        var hotelNameGroup = document.getElementById('hotelNameGroup');
+    
+        // Function to toggle visibility of related form fields
+        function toggleResidentialFields(display) {
+            checkInGroup.style.display = display ? 'block' : 'none';
+            checkOutGroup.style.display = display ? 'block' : 'none';
+            hotelNameGroup.style.display = display ? 'block' : 'none';
+        }
+    
+        // Event listener for changes to the residential status
+        residentialStatusSelect.addEventListener('change', function() {
+            var isResidential = this.value === 'residential';
+            toggleResidentialFields(isResidential);
+    
+            // Update hidden input to ensure correct form submission
+            document.getElementById('IsResidentialValue').value = this.value;
+        });
+    
+        // Initialize the form fields based on the guest's current residential status
+        var initialResidentialStatus = residentialStatusSelect.value;
+        toggleResidentialFields(initialResidentialStatus === 'residential');
+        
+        var shouldDisable = document.getElementById('guestTypeDisabled').value === 'true';
+        var guestTypeDropdown = document.getElementById('guestType');
+        if (shouldDisable) {
+            guestTypeDropdown.setAttribute('disabled', 'disabled');
+        }
+    });
+    </script>
+
+
 </body>
 </html>

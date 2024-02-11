@@ -8,28 +8,33 @@ header {
 
 /* Navbar styles */
 .navbar {
-    font-size: 1.5rem; /* Adjust font size as needed */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    font-size: 1rem; /* Adjust font size as needed */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 1); /* Subtle shadow for depth */
 }
 
 .navbar .nav-item {
     color: #ffffff; /* Bright white */
 }
 
-.navbar .nav-link:hover {
-    color: rgba(255, 255, 255, 1); /* Solid white on hover/focus */
+/* Adjusting font size, style, and color for navigation links */
+.navbar .nav-link {
+    font-family: 'Roboto', sans-serif; /* Change to your desired font-family */
+    font-size: 1.2rem; /* Adjust font size as needed */
+    color: #ffffff; /* Change to your desired color, e.g., white */
 }
 
-.navbar .nav-link:focus {
-    color: rgba(255, 255, 255, 1); /* Solid white on hover/focus */
+/* Optional: If you want a different color on hover/focus */
+.navbar .nav-link:hover, .navbar .nav-link:focus {
+    color: #cccccc; /* Lighter shade for hover/focus */
 }
+
 
 body {
     font-family: Arial, sans-serif;
 }
 
 header {
-    background-color: #007bff; /* Shade of blue */
+    background-color: #0e1012; /* Shade of blue */
     color: white;
     text-align: center;
     padding: 10px 0;

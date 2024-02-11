@@ -4,3 +4,4 @@ jinja2
 python-barcode
 python-multipart
 pydantic
+Pillow

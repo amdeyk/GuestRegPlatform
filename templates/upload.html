@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload CSV File</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="text-center">Upload CSV File</h1>
+        </div>
+    </header>
+
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+        <div class="container">
+            <!-- Add links here if needed -->
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mt-4">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="file" class="form-control-file" name="file" accept=".csv" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </form>
+            </div>
+        </div>
+        <!-- Error Table -->
+        <table id="errorTable" class="table table-bordered" style="display:none;">
+            <thead class="thead-light">
+                <tr>
+                    <th>Row</th>
+                    <th>Field</th>
+                    <th>Value</th>
+                    <th>Error</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Errors will be inserted here -->
+            </tbody>
+        </table>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-3">
+        <div class="container text-center">
+            <button onclick="location.href='/'" class="btn btn-secondary">Home</button>
+        </div>
+    </footer>
+
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+    
+            // Retrieve the password input field
+            const passwordInput = document.querySelector('input[type="password"]');
+            const password = passwordInput.value;
+    
+            // Check if the password is correct
+            if (password !== '1234567890') {
+                alert('Incorrect password');
+                return; // Stop the function if the password is incorrect
+            }
+    
+            // If the password is correct, create FormData and proceed with the upload
+            const formData = new FormData(this);
+            const response = await fetch('/upload-file', {
+                method: 'POST',
+                body: formData,
+            });
+            const result = await response.json();
+    
+            const errorTable = document.getElementById('errorTable');
+            const errorTableBody = errorTable.getElementsByTagName('tbody')[0];
+            errorTableBody.innerHTML = ''; // Clear previous errors
+    
+            if (result.success) {
+                alert(result.message);
+                errorTable.style.display = 'none'; // Hide table if upload successful
+            } else {
+                errorTable.style.display = 'table'; // Show table if there are errors
+                result.errors.forEach(error => {
+                    const row = errorTableBody.insertRow();
+                    row.insertCell().textContent = error.row;
+                    row.insertCell().textContent = error.field;
+                    row.insertCell().textContent = error.value;
+                    row.insertCell().textContent = error.error;
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

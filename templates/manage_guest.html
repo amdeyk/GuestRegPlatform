@@ -27,6 +27,8 @@
                 <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
                 <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
                 <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
+                <!-- Add the guest_view link here -->
+                <li class="nav-item"><a class="nav-link" href="/guest_view">One Guest View</a></li>
             </ul>
         </div>
     </nav>
@@ -99,6 +101,15 @@
                     <!-- Button for Lunch Coupon Day 3 -->
                     <div class="col-md-4 mb-2">
                         <button onclick="location.href='/lunch_day3'" class="btn btn-primary">Lunch Coupon Day 3</button>
+                    </div>
+                    <div style="height: 8rem;"></div> <!-- Adjust the height as needed -->
+                    <!-- New Buttons for Critical Updates -->
+                    <div class="alert alert-danger text-center" role="alert">
+                        <strong>Critical Update</strong>
+                    </div>
+                    <div class="text-center mb-3">
+                        <button onclick="location.href='/update-guest-name'" class="btn btn-danger">Update Guest Name</button>
+                        <button onclick="location.href='/update-guest-phone'" class="btn btn-danger">Update Guest Phone Number</button>
                     </div>
             
                     <!-- Add additional buttons for other functionalities as needed -->

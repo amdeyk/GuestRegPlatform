@@ -7,7 +7,27 @@
     <link rel="stylesheet" href="/static/style.css">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    
+    <style>
+        .welcome-banner {
+            padding: 50px 0;
+            background: linear-gradient(45deg, #555, #555);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            border-bottom: 10px solid #4cc1af;
+        }
+        .welcome-banner h1,
+        .welcome-banner h2 {
+            font-family: 'Arial', sans-serif;
+        }
+        .welcome-banner h1 {
+            font-size: 6rem;
+            margin-bottom: 0;
+        }
+        .welcome-banner h2 {
+            font-size: 3rem;
+            margin-top: 0;
+        }
+    </style>
 </head>
 <body>
     <!-- Header with Bootstrap styles -->
@@ -27,19 +47,25 @@
                 <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
                 <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
                 <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
+                <!-- Add the guest_view link here -->
+                <li class="nav-item"><a class="nav-link" href="/guest_view">One Guest View</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Image Section -->
-    <div class="text-center">
-        <img src="/static/conference.jpg" alt="Conference Image" class="full-width-image">
+    <!-- Welcome Text Section -->
+    <div class="welcome-banner text-center">
+        <h2>Welcome to Guest Management System of</h2>
+        <h1>AROI CON 2024</h1>
     </div>
 
-    <footer>
-        <button onclick="location.href='/'">Home</button>
-        <button onclick="location.href='/login'">Login Page</button>
-        <button>Help: +91-9899339005</button>
+    <footer class="mt-5">
+        <div class="container text-center">
+            <button onclick="location.href='/'" class="btn btn-secondary">Home</button>
+            <button onclick="location.href='/login'" class="btn btn-secondary">Login Page</button>
+            <button class="btn btn-secondary">Help: +91-9899339005</button>
+            <button onclick="location.href='/upload'" class="btn btn-secondary">Upload CSV</button>
+        </div>
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -47,4 +73,3 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
-
