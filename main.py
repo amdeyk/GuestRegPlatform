@@ -16,7 +16,7 @@ import configparser
 import shutil
 from datetime import datetime
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel,  ClassVar
 from typing import Optional
 import codecs
 import json
