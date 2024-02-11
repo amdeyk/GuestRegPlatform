@@ -57,7 +57,7 @@ class UpdateGuestInfo(BaseModel):
     isResidential: bool = False
     isEligibleCar: bool = False
     hotelName: str = ""
-    recordCheck = str = "N"
+    recordCheck: ClassVar[str] = 'N'
     
 class GuestRegistrationForm(BaseModel):
     # A model for guest registration form data capturing essential guest information.
