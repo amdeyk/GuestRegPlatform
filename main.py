@@ -16,8 +16,8 @@ import configparser
 import shutil
 from datetime import datetime
 from fastapi.responses import FileResponse
-from pydantic import BaseModel,  ClassVar
-from typing import Optional
+from pydantic import BaseModel
+from typing import Optional, ClassVar
 import codecs
 import json
 from urllib.parse import parse_qs
