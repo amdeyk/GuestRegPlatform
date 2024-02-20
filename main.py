@@ -18,7 +18,6 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import Optional, ClassVar
 import codecs
-import json
 from urllib.parse import parse_qs
 from fastapi import File, UploadFile
 from typing import Tuple, List, Dict
@@ -44,7 +43,7 @@ BACKGROUND_IMAGES = {
     "Pgt": "./static/pgt.jpg",
     "Event": "./static/event.jpg",
 }
-
+#
 # Adjust paths as necessary
 FONT_PATH_BOLD = "./static/Montserrat-Bold.ttf"
 FONT_PATH_REGULAR = "./static/Montserrat-Regular.ttf"
