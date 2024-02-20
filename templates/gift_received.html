@@ -52,18 +52,22 @@
                 <div class="card-body">
                     <form action="/submit-guest-gift" method="post">
                         <input type="hidden" name="guest_id" value="{{ guest.ID }}">
-
+        
                         <div class="form-group">
                             <label for="guestName">Guest Name:</label>
                             <input type="text" class="form-control" id="guestName" name="guest_name" value="{{ guest.Name }}" readonly>
                         </div>
-
-                        <!-- Gift Update Button -->
-                        {% if guest.IsGiftReceived == "True" %}
-                            <div class="alert alert-info">Gift already received.</div>
-                            <button type="button" class="btn btn-danger btn-lg" disabled>X</button>
+        
+                        <!-- Gift Update Button, conditional on role -->
+                        {% if guest.GuestRole in ["Faculty", "Delegate", "Pgt"] %}
+                            {% if guest.IsGiftReceived == "True" %}
+                                <div class="alert alert-info">Gift already received.</div>
+                                <button type="button" class="btn btn-danger btn-lg" disabled>Already Received</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-success btn-lg">Mark Gift as Received</button>
+                            {% endif %}
                         {% else %}
-                            <button type="submit" class="btn btn-success btn-lg">Mark Gift as Received</button>
+                            <div class="alert alert-secondary">Not eligible for a gift.</div>
                         {% endif %}
                     </form>
                 </div>
