@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conference Certificate Management</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="text-center">Conference Certificate Management</h1>
+        </div>
+    </header>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+        <div class="container">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/guest_registration">Guest Registration</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin_dashboard">Admin Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/employee_dashboard">Employee Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
+                <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
+                <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
+                <!-- Add any additional navigation links here -->
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Manage Conference Certificate Status</h2>
+
+        <!-- Form for Guest ID Input -->
+        <form action="/fetch-guest-conference-certificate" method="get">
+            <div class="form-group">
+                <label for="guestIdInput">Enter Guest ID:</label>
+                <input type="text" class="form-control" id="guestIdInput" name="guest_id" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Fetch Guest Details</button>
+        </form>
+
+        <!-- Display Error Messages -->
+        {% if error %}
+            <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endif %}
+
+        <!-- Display Guest Details for Conference Certificate Status Update -->
+        {% if guest %}
+            <div class="card mb-4">
+                <div class="card-header">Update Conference Certificate Status</div>
+                <div class="card-body">
+                    <form action="/submit-guest-conference-certificate" method="post">
+                        <input type="hidden" name="guest_id" value="{{ guest.ID }}">
+                        <div class="form-group">
+                            <label>Guest Name:</label>
+                            <input type="text" class="form-control" value="{{ guest.Name }}" readonly>
+                        </div>
+
+                        <!-- Conference Certificate Checkbox, conditional on role -->
+                        {% if guest.GuestRole in ["Faculty", "Delegate", "Pgt"] %}
+                            {% if guest.IsConferenceCertificateReceived == "True" %}
+                                <!-- Displayed as received, no action needed -->
+                                <div class="alert alert-info">Conference certificate already received.</div>
+                                <button class="btn btn-danger" disabled>Already Received</button>
+                            {% else %}
+                                <!-- Actionable for eligible roles -->
+                                <button type="submit" class="btn btn-success">Mark as Received</button>
+                            {% endif %}
+                        {% else %}
+                            <!-- Non-eligible roles see this -->
+                            <div class="alert alert-secondary">Not eligible for Conference Certificate as Delegate Faculty or PGT not Selected.</div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <footer>
+        <button onclick="location.href='/'">Home</button>
+        <button onclick="location.href='/login'">Login Page</button>
+        <button>Help: +91-9899339005</button>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

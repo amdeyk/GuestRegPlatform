@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Guest Activities - Conference Guest Management System</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="text-center">Manage Guest Activities</h1>
+        </div>
+    </header>
+
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Manage Guest Activities</h2>
+        <p>
+                <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#userGuideCollapse" aria-expanded="false" aria-controls="userGuideCollapse">
+                    Show User Guide
+                </button>
+            </p>
+            <div class="collapse" id="userGuideCollapse">
+                <div class="card card-body">
+                    <strong>How to Use This Page:</strong>
+                    <ul>
+                        <li><strong>Guest Check-In Management:</strong> Click this button to navigate to the check-in management page. Here, you can update the status of guests as they arrive, ensuring that their attendance is accurately recorded.</li>
+                        <li><strong>Payment Status Tracking: </strong>Use this option to manage and confirm payment receipts. It helps in keeping track of financial transactions for each guest, making sure all payments are accounted for.</li>
+                        <li><strong>Gift Distribution Records: </strong> This button leads you to the gift management section. Here, you can record which guests have received their gifts, helping in efficiently managing and distributing gifts.</li>
+                        <li><strong>Car Service Management: </strong>Select this to update the status of car services provided to guests. Whether it's a rental or a shuttle service, this feature ensures that all transportation arrangements are tracked.</li>
+                        <li><strong>Meal Coupon Distribution: </strong>Head to this section to manage meal coupons. It allows you to distribute, track, and manage meal coupons for each day, ensuring all guests receive their entitled meals.</li>
+                        <li><strong>Simplified Guest Management: </strong>Each of these buttons is designed to streamline specific guest management tasks. By providing a centralized and organized way to handle different aspects of guest services, these tools help in enhancing the efficiency and effectiveness of event management.</li>
+                    </ul>
+                </div>
+            </div>
+        <div class="row">
+         <!-- Button for Guest Check-in -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Guest Check-in</h5>
+                    <p class="card-text">Update the status of guests as they arrive.</p>
+                    <button onclick="location.href='/checkin'" class="btn btn-primary">Manage Check-in</button>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <!-- Button for Payment Received -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Payment Received</h5>
+                    <p class="card-text">Manage and confirm payment receipts.</p>
+                    <button onclick="location.href='/payment_received'" class="btn btn-primary">Manage Payments</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Button for Gift Received -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Gift Received</h5>
+                    <p class="card-text">Record and manage gift distributions.</p>
+                    <button onclick="location.href='/gift'" class="btn btn-primary">Manage Gifts</button>
+                </div>
+            </div>
+        </div>
+        </div>        
+        <!-- Button for Car Received -->
+        <div class="row">
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Car Received</h5>
+                    <p class="card-text">Update the status of car services provided.</p>
+                    <button onclick="location.href='/car_received'" class="btn btn-primary">Manage Car Services</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Button for Lunch Coupon Day 1 -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Lunch Coupon Day 1</h5>
+                    <p class="card-text">Distribute and track Day 1 lunch coupons.</p>
+                    <button onclick="location.href='/lunch_day1'" class="btn btn-primary">Manage Day 1 Lunch</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Button for Dinner Coupon Day 1 -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Dinner Coupon Day 1</h5>
+                    <p class="card-text">Distribute and track Day 1 dinner coupons.</p>
+                    <button onclick="location.href='/dinner_day1'" class="btn btn-primary">Manage Day 1 Dinner</button>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- Button for Lunch Coupon Day 2 -->
+        <div class="row">
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Lunch Coupon Day 2</h5>
+                    <p class="card-text">Distribute and track Day 2 lunch coupons.</p>
+                    <button onclick="location.href='/lunch_day2'" class="btn btn-primary">Manage Day 2 Lunch</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Button for Dinner Coupon Day 2 -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Dinner Coupon Day 2</h5>
+                    <p class="card-text">Distribute and track Day 2 dinner coupons.</p>
+                    <button onclick="location.href='/dinner_day2'" class="btn btn-primary">Manage Day 2 Dinner</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Button for Lunch Coupon Day 3 -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Lunch Coupon Day 3</h5>
+                    <p class="card-text">Distribute and track Day 3 lunch coupons.</p>
+                    <button onclick="location.href='/lunch_day3'" class="btn btn-primary">Manage Day 3 Lunch</button>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <!-- Button for Faculty Gift Management -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Faculty Gift Management</h5>
+                    <p class="card-text">Track and update the distribution of faculty gifts.</p>
+                    <button onclick="location.href='/faculty_gift'" class="btn btn-primary">Manage Faculty Gifts</button>
+                </div>
+            </div>
+        </div>
+        <!-- Button for Conference Certificate Management -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Certificate Management</h5>
+                    <p class="card-text">Update the distribution of conference certificates.</p>
+                    <button onclick="location.href='/conference_certificate'" class="btn btn-primary">Manage Conference Certificates</button>
+                </div>
+            </div>
+        </div>
+        <!-- Button for Medical Council Certificate Management -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Medical Council Certificate Mgmt</h5>
+                    <p class="card-text">Track and update the issuance of Medical Council certificates.</p>
+                    <button onclick="location.href='/medical_council_certificate'" class="btn btn-primary">Manage Medical Council Certificates</button>
+                </div>
+            </div>
+        </div>
+
+
+        </div>
+        <!-- Critical Update for Guest Name -->
+        <div class="row">
+        <div class="col-md-6 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Update Guest Name</h5>
+                    <p class="card-text">Modify the name details of registered guests.</p>
+                    <button onclick="location.href='/update-guest-name'" class="btn btn-danger">Update Name</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Critical Update for Guest Phone Number -->
+        <div class="col-md-6 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Update Guest Phone Number</h5>
+                    <p class="card-text">Correct or update the phone numbers of attendees.</p>
+                    <button onclick="location.href='/update-guest-phone'" class="btn btn-danger">Update Phone</button>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div style="height: 7rem;"></div> <!-- Adjust the height as needed -->
+        </div>
+        </div>  
+    <!-- Footer -->
+    <footer class="text-center mt-4">
+        <p>For assistance, contact Help: +91-9899339005</p>
+    </footer>
+
+    <!-- Bootstrap and jQuery Scripts -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
+

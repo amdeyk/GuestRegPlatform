@@ -7,35 +7,28 @@
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
-        /* Larger checkboxes */
         .form-check {
-            padding: 10px; /* Adjust the padding size as needed */
-            margin-bottom: 5px; /* Optional: Adds space between checkboxes */
-            border: 1px solid #ddd; /* Optional: Adds a border around each checkbox */
-            border-radius: 5px; /* Optional: Rounds the corners of the border */
-            background-color: #f8f8f8; /* Optional: Adds background color */
+            padding: 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f8f8f8;
         }
         .large-checkbox .form-check-input {
-            width: 20px;  /* Adjust size as needed */
-            height: 20px; /* Adjust size as needed */
-            right: 15px
+            width: 20px;
+            height: 20px;
             cursor: pointer;
         }
-    
-        /* Styling for disabled checkboxes */
         .large-checkbox .form-check-input:disabled {
             border-color: red;
             background-color: lightgray;
             cursor: not-allowed;
         }
-    
-        .large-checkbox .form-check-input:disabled + .form-check-label {
-            color: red;
-            padding: 5px; /* Adjust the padding size as needed */
-            font-size: larger; /* Adjust size as needed */
+        .large-checkbox .form-check-label {
+            color: darkslategray;
+            cursor: pointer;
         }
     </style>
-
 </head>
 <body>
     <header class="bg-dark text-white py-3">
@@ -53,7 +46,6 @@
                 <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
                 <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
                 <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
-                <!-- Add the guest_view link here -->
                 <li class="nav-item"><a class="nav-link" href="/guest_view">One Guest View</a></li>
             </ul>
         </div>
@@ -61,25 +53,6 @@
 
     <div class="container mt-4">
         <h2 class="text-center mb-4">Guest Management</h2>
-        <!-- Collapsible User Guide/Help Section -->
-            <p>
-                <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#userGuideCollapse" aria-expanded="false" aria-controls="userGuideCollapse">
-                    Show User Guide
-                </button>
-            </p>
-            <div class="collapse" id="userGuideCollapse">
-                <div class="card card-body">
-                    <strong>How to Use This Page:</strong>
-                    <ul>
-                        <li>Enter a guest ID to fetch and view their details for updates.</li>
-                        <li>Check or uncheck the boxes to update guest status, such as check-in status, meal coupons, and gift reception.</li>
-                        <li>Click 'Update Guest Information' to save any changes made to the guest's status.</li>
-                        <li>Use the 'Barcode Scanning & Updates' button for quick scanning and updating of guest information.</li>
-                        <li>If a guest ID is not found, an alert will be displayed.</li>
-                    </ul>
-                </div>
-            </div>
-        <!-- Form for Guest ID Input -->
         <form action="/fetch-guest" method="get">
             <div class="form-group">
                 <label for="guestIdInput">Enter Guest ID:</label>
@@ -87,214 +60,333 @@
             </div>
             <button type="submit" class="btn btn-primary">Fetch Guest Details</button>
         </form>
-        
-        <!-- Display Update Confirmation -->
+
         {% if request.query_params.get("update_success") %}
-            <div class="alert alert-success mt-4">
-                Record Updated Successfully
-            </div>
+            <div class="alert alert-success mt-4">Record Updated Successfully</div>
         {% endif %}
-        
-        <!-- Display Guest Details for Update -->
+
         {% if guest %}
             <div class="card mb-4">
-            <div class="card-header">Update Guest Information</div>
-            <div class="card-body">
-                <form action="/update-guest-info" method="post">
-                    <input type="hidden" name="guest_id" value="{{ guest.ID }}">
-        
-                   <div class="form-group">
-                        <label for="guestName">Guest Name:</label>
-                        <input type="text" class="form-control" id="guestName" name="guest_name" value="{{ guest.Name }}" readonly>
-                    </div>
-                    
-                    <!-- Guest Phone (Read-only) -->
-                    <div class="form-group">
-                        <label for="guestPhone">Guest Phone:</label>
-                        <input type="tel" class="form-control" id="guestPhone" name="guest_phone" value="{{ guest.Phone }}" readonly>
-                    </div>
-        
-                    <!-- Check-in Checkbox -->
-                    <div class="container">
-                    <div class="row">
-                        <!-- Column 1 -->
-                        <div class="col">
-                            <!-- Check-in Checkbox -->
-                            <div class="form-check large-checkbox">
-                                <input type="checkbox" class="form-check-input" id="checkinCheckbox" name="isCheckedIn" {% if guest.IsCheckedIn == "True" %} checked disabled {% endif %}>
-                                <label class="form-check-label" for="checkinCheckbox">Check-in Guest</label>
-                            </div>
-                
-                            <!-- Payment Received Checkbox -->
-                            <div class="form-check large-checkbox">
-                                <input type="checkbox" class="form-check-input" id="paymentCheckbox" name="isPaymentReceived" {% if guest.IsPaymentReceived == "True" %} checked disabled {% endif %}>
-                                <label class="form-check-label" for="paymentCheckbox">Payment Received</label>
-                            </div>
-                
-                            <!-- Meal Coupons Day 1 - Lunch -->
-                            <div class="form-check large-checkbox">
-                                <input type="checkbox" class="form-check-input" id="lunchDay1Checkbox" name="isLunchDay1" {% if guest.IsLunchDay1 == "True" %} checked disabled {% endif %}>
-                                <label class="form-check-label" for="lunchDay1Checkbox">Lunch Coupon Day 1 Given</label>
-                            </div>
-                
-                            <!-- Meal Coupons Day 2 - Lunch -->
-                            <div class="form-check large-checkbox">
-                                <input type="checkbox" class="form-check-input" id="lunchDay2Checkbox" name="isLunchDay2" {% if guest.IsLunchDay2 == "True" %} checked disabled {% endif %}>
-                                <label class="form-check-label" for="lunchDay2Checkbox">Lunch Coupon Day 2 Given</label>
-                            </div>
-                            <div class="form-group">
-                                <label>Guest Type:</label>
-                                <select class="form-control" id="guestType" name="guestType" {{ 'disabled' if guest and (guest.IsFaculty == 'True' or guest.IsIndustry == 'True' or (guest.IsFaculty == 'False' and guest.IsIndustry == 'False')) }}>
-                                    <option value="">Select</option> <!-- Always available but not selectable after a choice is made -->
-                                    <option value="delegate" {% if guest and guest.IsFaculty == 'False' and guest.IsIndustry == 'False' %}selected{% elif not guest %}selected{% endif %}>Delegate</option>
-                                    <option value="faculty" {% if guest and guest.IsFaculty == 'True' %}selected{% endif %}>Faculty</option>
-                                    <option value="industry" {% if guest and guest.IsIndustry == 'True' %}selected{% endif %}>Industry</option>
-                                </select>
-
-
-                                <input type="hidden" name="IsFaculty" value="{% if guest.IsFaculty == 'True' %}True{% endif %}">
-                                <input type="hidden" name="IsIndustry" value="{% if guest.IsIndustry == 'True' %}True{% endif %}">
-                            </div>
-
-
-
-
-                            <div class="form-group">
-                                <label for="residentialStatus">Residential Status:</label>
-                                <select class="form-control" id="residentialStatus" name="residential_status">
-                                    <option value="">Select</option>
-                                    <option value="residential" {{ 'selected' if guest.IsResidential == 'True' }}>Residential</option>
-                                    <option value="non_residential" {{ 'selected' if guest.IsResidential == 'False' }}>Non-Residential</option>
-                                </select>
-                                
-                                <!-- Additional form fields related to residential status -->
-                                <div class="form-group" id="checkInGroup" style="display:none;">
-                                    <label for="checkIn">Check-In Date/Time:</label>
-                                    <input type="datetime-local" class="form-control" id="checkIn" name="check_in">
+                <div class="card-header">Update Guest Information</div>
+                <div class="card-body">
+                    <form action="/update-guest-info" method="post" id="updateGuestForm">
+                        <input type="hidden" name="guest_id" value="{{ guest.ID }}">
+                        
+                        <div class="form-group">
+                             <label for="guestName">Guest Name:</label>
+                             <input type="text" class="form-control" id="guestName" name="guest_name" value="{{ guest.Name }}" readonly>
+                         </div>
+                         
+                         <!-- Guest Phone (Read-only) -->
+                         <div class="form-group">
+                             <label for="guestPhone">Guest Phone:</label>
+                             <input type="tel" class="form-control" id="guestPhone" name="guest_phone" value="{{ guest.Phone }}" readonly>
+                         </div>
+             
+                         <!-- Check-in Checkbox -->
+                         <div class="container">
+                         <div class="row">
+                             <!-- Column 1 -->
+                             <div class="col">
+                                 <!-- Check-in Checkbox -->
+                                <div class="form-check large-checkbox">
+                                    {% if guest.IsCheckedIn == "True" %}
+                                        <!-- If already true, display checked and disabled, and ensure true value is submitted -->
+                                        <input type="checkbox" class="form-check-input" id="checkinCheckbox" name="IsCheckedIn_display" checked disabled>
+                                        <input type="hidden" name="IsCheckedIn" value="True">
+                                    {% else %}
+                                        <!-- If false or not set, allow user interaction to set the value -->
+                                        <input type="checkbox" class="form-check-input" id="checkinCheckbox" name="IsCheckedIn" {% if guest.IsCheckedIn == "True" %} checked {% endif %}>
+                                    {% endif %}
+                                    <label class="form-check-label" for="checkinCheckbox">Check-in Guest</label>
                                 </div>
-                                <div class="form-group" id="checkOutGroup" style="display:none;">
-                                    <label for="checkOut">Check-Out Date/Time:</label>
-                                    <input type="datetime-local" class="form-control" id="checkOut" name="check_out">
+                                            
+                     
+                                 <!-- Payment Received Checkbox -->
+                                <div class="form-check large-checkbox">
+                                    {% if guest.IsPaymentReceived == "True" %}
+                                        <!-- If already true, display checked and disabled, and ensure true value is submitted -->
+                                        <input type="checkbox" class="form-check-input" id="paymentCheckbox" name="IsPaymentReceived_display" checked disabled>
+                                        <input type="hidden" name="IsPaymentReceived" value="True">
+                                    {% else %}
+                                        <!-- If false or not set, allow user interaction to set the value -->
+                                        <input type="checkbox" class="form-check-input" id="paymentCheckbox" name="IsPaymentReceived" {% if guest.IsPaymentReceived == "True" %} checked {% endif %}>
+                                    {% endif %}
+                                    <label class="form-check-label" for="paymentCheckbox">Payment Received</label>
                                 </div>
-                                <div class="form-group" id="hotelNameGroup" style="display:none;">
-                                    <label for="hotelName">Hotel Name:</label>
-                                    <input type="text" class="form-control" id="hotelName" name="hotel_name">
+
+                     
+                                 <!-- Meal Coupons Day 1 - Lunch -->
+                                <div class="form-check large-checkbox">
+                                    {% if guest.IsLunchDay1 == "True" %}
+                                        <input type="checkbox" class="form-check-input" id="lunchDay1Checkbox" name="IsLunchDay1_display" checked disabled>
+                                        <input type="hidden" name="IsLunchDay1" value="True">
+                                    {% else %}
+                                        <input type="checkbox" class="form-check-input" id="lunchDay1Checkbox" name="IsLunchDay1" {% if guest.IsLunchDay1 == "True" %} checked {% endif %}>
+                                    {% endif %}
+                                    <label class="form-check-label" for="lunchDay1Checkbox">Lunch Coupon Day 1 Given</label>
                                 </div>
                                 
-                                <!-- Hidden input to preserve the residential status if the select is disabled -->
-                                <input type="hidden" id="IsResidentialValue" name="IsResidential" value="{{ guest.IsResidential }}">
-
-                            </div>
-
-                        </div>
-                
-                        <!-- Column 2 -->
-                        <div class="col">
-                            <!-- Gift Received Checkbox -->
-                            <div class="form-check large-checkbox">
-                                <input type="checkbox" class="form-check-input" id="giftCheckbox" name="isGiftReceived" {% if guest.IsGiftReceived == "True" %} checked disabled {% endif %}>
-                                <label class="form-check-label" for="giftCheckbox">Gift Received</label>
-                            </div>
-                
-                            <!-- Car Received Checkbox -->
-                            <div class="form-check large-checkbox">
-                                <input type="checkbox" class="form-check-input" id="carReceivedCheckbox" name="isCarReceived" {% if guest.IsCarReceived == "True" %} checked disabled {% endif %}>
-                                <label class="form-check-label" for="carReceivedCheckbox">Car Received</label>
-                            </div>
-                            <div class="form-group">
-                                <label for="carNumber">Car Number:</label>
-                                <input type="text" class="form-control" id="carNumber" name="carNumber" value="{{ guest.CarNumber }}">
-                            </div>
-
-                
-                            <!-- Meal Coupons Day 1 - Dinner -->
-                            <div class="form-check large-checkbox">
-                                <input type="checkbox" class="form-check-input" id="dinnerDay1Checkbox" name="isDinnerDay1" {% if guest.IsDinnerDay1 == "True" %} checked disabled {% endif %}>
-                                <label class="form-check-label" for="dinnerDay1Checkbox">Dinner Coupon Day 1 Given</label>
-                            </div>
-                
-                            <!-- Meal Coupons Day 2 - Dinner -->
-                            <div class="form-check large-checkbox">
-                                <input type="checkbox" class="form-check-input" id="dinnerDay2Checkbox" name="isDinnerDay2" {% if guest.IsDinnerDay2 == "True" %} checked disabled {% endif %}>
-                                <label class="form-check-label" for="dinnerDay2Checkbox">Dinner Coupon Day 2 Given</label>
-                            </div>
-                
-                            <!-- Meal Coupons Day 3 - Lunch -->
-                            <div class="form-check large-checkbox">
-                                <input type="checkbox" class="form-check-input" id="lunchDay3Checkbox" name="isLunchDay3" {% if guest.IsLunchDay3 == "True" %} checked disabled {% endif %}>
-                                <label class="form-check-label" for="lunchDay3Checkbox">Lunch Coupon Day 3 Given</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-        
-                    <div class="mt-4 text-center">
-                        <button type="submit" class="btn btn-primary">Update Guest Information</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        {% elif request.query_params.get("guest_id") %}
-            <div class="alert alert-danger mt-4">
-                    Guest ID not found.
-                </div>
-            {% endif %}
-        </div>
+                                <!-- Meal Coupons Day 2 - Lunch -->
+                                <div class="form-check large-checkbox">
+                                    {% if guest.IsLunchDay2 == "True" %}
+                                        <input type="checkbox" class="form-check-input" id="lunchDay2Checkbox" name="IsLunchDay2_display" checked disabled>
+                                        <input type="hidden" name="IsLunchDay2" value="True">
+                                    {% else %}
+                                        <input type="checkbox" class="form-check-input" id="lunchDay2Checkbox" name="IsLunchDay2" {% if guest.IsLunchDay2 == "True" %} checked {% endif %}>
+                                    {% endif %}
+                                    <label class="form-check-label" for="lunchDay2Checkbox">Lunch Coupon Day 2 Given</label>
+                                </div>
 
                         
-        
-    <div style="height: 3rem;"></div> <!-- Adjust the height as needed -->
+                        <div class="form-group">
+                            <label>Guest Type:</label>
+                            <select class="form-control" id="GuestRole" name="GuestRole" {{ 'disabled' if guest.GuestRole }}>
+                                <option value="Delegate" {{ 'selected' if guest.GuestRole == 'Delegate' }}>Delegate</option>
+                                <option value="Faculty" {{ 'selected' if guest.GuestRole == 'Faculty' }}>Faculty</option>
+                                <option value="Industry" {{ 'selected' if guest.GuestRole == 'Industry' }}>Industry</option>
+                                <option value="Event" {{ 'selected' if guest.GuestRole == 'Event' }}>Event</option>
+                                <option value="Pgt" {{ 'selected' if guest.GuestRole == 'Pgt' }}>Pgt</option>
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label>Residential Status:</label>
+                            <select class="form-control" id="residentialStatus" name="residential_status" {{ 'disabled' if guest.residential_status }}>
+                                <option value="residential" {{ 'selected' if guest.residential_status == 'residential' }}>Residential</option>
+                                <option value="non_residential" {{ 'selected' if guest.residential_status == 'non_residential' }}>Non-Residential</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Include these fields within the form but conditionally show them based on residential status -->
+                        <div id="residentialDetails" style="display: none;">
+                            <div class="form-group">
+                                <label for="checkIn">Check-In Date/Time:</label>
+                                <input type="datetime-local" class="form-control" id="checkIn" name="CheckIn" value="{{ guest.check_in }}">
+                            </div>
+                        
+                            <div class="form-group">
+                                <label for="checkOut">Check-Out Date/Time:</label>
+                                <input type="datetime-local" class="form-control" id="checkOut" name="CheckOut" value="{{ guest.check_out }}">
+                            </div>
+                        
+                            <div class="form-group">
+                                <label for="hotelName">Hotel Name:</label>
+                                <input type="text" class="form-control" id="hotelName" name="HotelName" value="{{ guest.hotel_name }}">
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden input to preserve the residential status if the select is disabled -->
+                        <input type="hidden" id="IsResidentialValue" name="IsResidential" value="{{ guest.residential_status }}">
+
+    
+                    </div>
+            
+                    <!-- Column 2 -->
+                    <div class="col">
+                        <!-- Gift Received Checkbox -->
+                        <!-- Assuming 'IsGiftReceived' should allow updates if initially 'False' -->
+                        <!-- Gift Received Checkbox with Role Restrictions -->
+                        <div class="form-check large-checkbox">
+                            {% if guest.GuestRole in ["Faculty", "Delegate", "Pgt"] %}
+                                {% if guest.IsGiftReceived == "True" %}
+                                    <!-- If eligible and already received, display checked and disabled, ensure true value is submitted -->
+                                    <input type="checkbox" class="form-check-input" id="giftCheckbox" name="IsGiftReceived_display" checked disabled>
+                                    <input type="hidden" name="IsGiftReceived" value="True">
+                                {% else %}
+                                    <!-- If eligible and not received, allow user interaction to set the value -->
+                                    <input type="checkbox" class="form-check-input" id="giftCheckbox" name="IsGiftReceived">
+                                {% endif %}
+                            {% else %}
+                                <!-- If not eligible, display disabled and ensure false value is submitted -->
+                                <input type="checkbox" class="form-check-input" id="giftCheckbox" name="IsGiftReceived_display" disabled>
+                                <input type="hidden" name="IsGiftReceived" value="False">
+                            {% endif %}
+                            <label class="form-check-label" for="giftCheckbox">Gift Received</label>
+                        </div>
+
+                        
+
+            
+                        <!-- Car Received Checkbox with Role Restrictions -->
+                        <div class="form-check large-checkbox">
+                            {% if guest.GuestRole in ["Faculty", "Delegate"] %}
+                                {% if guest.IsCarReceived == "True" %}
+                                    <!-- If eligible and already received, display checked and disabled, ensure true value is submitted -->
+                                    <input type="checkbox" class="form-check-input" id="carReceivedCheckbox" name="IsCarReceived_display" checked disabled>
+                                    <input type="hidden" name="IsCarReceived" value="True">
+                                {% else %}
+                                    <!-- If eligible and not received, allow user interaction to set the value -->
+                                    <input type="checkbox" class="form-check-input" id="carReceivedCheckbox" name="IsCarReceived">
+                                {% endif %}
+                            {% else %}
+                                <!-- If not eligible, display disabled and ensure false value is submitted -->
+                                <input type="checkbox" class="form-check-input" id="carReceivedCheckbox" name="IsCarReceived_display" disabled>
+                                <input type="hidden" name="IsCarReceived" value="False">
+                            {% endif %}
+                            <label class="form-check-label" for="carReceivedCheckbox">Car Received</label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="carNumber">Car Number:</label>
+                            <input type="text" class="form-control" id="carNumber" name="carNumber" value="{{ guest.CarNumber }}">
+                        </div>
+                        
+                        <!-- Meal Coupons Day 1 - Dinner -->
+                        <div class="form-check large-checkbox">
+                            {% if guest.IsDinnerDay1 == "True" %}
+                                <input type="checkbox" class="form-check-input" id="dinnerDay1Checkbox" name="IsDinnerDay1_display" checked disabled>
+                                <input type="hidden" name="IsDinnerDay1" value="True">
+                            {% else %}
+                                <input type="checkbox" class="form-check-input" id="dinnerDay1Checkbox" name="IsDinnerDay1">
+                            {% endif %}
+                            <label class="form-check-label" for="dinnerDay1Checkbox">Dinner Coupon Day 1 Given</label>
+                        </div>
+                        
+                        <!-- Meal Coupons Day 2 - Dinner -->
+                        <div class="form-check large-checkbox">
+                            {% if guest.IsDinnerDay2 == "True" %}
+                                <input type="checkbox" class="form-check-input" id="dinnerDay2Checkbox" name="IsDinnerDay2_display" checked disabled>
+                                <input type="hidden" name="IsDinnerDay2" value="True">
+                            {% else %}
+                                <input type="checkbox" class="form-check-input" id="dinnerDay2Checkbox" name="IsDinnerDay2">
+                            {% endif %}
+                            <label class="form-check-label" for="dinnerDay2Checkbox">Dinner Coupon Day 2 Given</label>
+                        </div>
+                        
+                        <!-- Meal Coupons Day 3 - Lunch -->
+                        <div class="form-check large-checkbox">
+                            {% if guest.IsLunchDay3 == "True" %}
+                                <input type="checkbox" class="form-check-input" id="lunchDay3Checkbox" name="IsLunchDay3_display" checked disabled>
+                                <input type="hidden" name="IsLunchDay3" value="True">
+                            {% else %}
+                                <input type="checkbox" class="form-check-input" id="lunchDay3Checkbox" name="IsLunchDay3">
+                            {% endif %}
+                            <label class="form-check-label" for="lunchDay3Checkbox">Lunch Coupon Day 3 Given</label>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+                            <div class="form-row">
+                            <div class="col-md-4 mb-3">
+                                <!-- Faculty Gift Received Checkbox -->
+                                <div class="form-check large-checkbox">
+                                    {% if guest.GuestRole == "Faculty" %}
+                                        {% if guest.IsFacultyGiftReceived == "True" %}
+                                            <input type="checkbox" class="form-check-input" id="facultyGiftReceivedCheckbox" name="IsFacultyGiftReceived_display" checked disabled>
+                                            <input type="hidden" name="IsFacultyGiftReceived" value="True">
+                                        {% else %}
+                                            <input type="checkbox" class="form-check-input" id="facultyGiftReceivedCheckbox" name="IsFacultyGiftReceived">
+                                        {% endif %}
+                                    {% else %}
+                                        <input type="checkbox" class="form-check-input" id="facultyGiftReceivedCheckbox" name="IsFacultyGiftReceived" disabled>
+                                        <input type="hidden" name="IsFacultyGiftReceived" value="{{ guest.IsFacultyGiftReceived }}">
+                                    {% endif %}
+                                    <label class="form-check-label" for="facultyGiftReceivedCheckbox">Faculty Gift Received</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <!-- Conference Certificate Received Checkbox -->
+                                <div class="form-check large-checkbox">
+                                    {% if guest.GuestRole in ["Faculty", "Delegate", "Pgt"] %}
+                                        {% if guest.IsConferenceCertificateReceived == "True" %}
+                                            <input type="checkbox" class="form-check-input" id="conferenceCertificateReceivedCheckbox" name="IsConferenceCertificateReceived_display" checked disabled>
+                                            <input type="hidden" name="IsConferenceCertificateReceived" value="True">
+                                        {% else %}
+                                            <input type="checkbox" class="form-check-input" id="conferenceCertificateReceivedCheckbox" name="IsConferenceCertificateReceived">
+                                        {% endif %}
+                                    {% else %}
+                                        <input type="checkbox" class="form-check-input" id="conferenceCertificateReceivedCheckbox" name="IsConferenceCertificateReceived" disabled>
+                                        <input type="hidden" name="IsConferenceCertificateReceived" value="{{ guest.IsConferenceCertificateReceived }}">
+                                    {% endif %}
+                                    <label class="form-check-label" for="conferenceCertificateReceivedCheckbox">Conference Certificate Received</label>
+                                </div>
+
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <!-- Medical Council Certificate Received Checkbox -->
+                                <div class="form-check large-checkbox">
+                                    {% if guest.GuestRole in ["Faculty", "Delegate", "Pgt"] %}
+                                        {% if guest.IsMedicalCouncilCertificateReceived == "True" %}
+                                            <input type="checkbox" class="form-check-input" id="medicalCouncilCertificateReceivedCheckbox" name="IsMedicalCouncilCertificateReceived_display" checked disabled>
+                                            <input type="hidden" name="IsMedicalCouncilCertificateReceived" value="True">
+                                        {% else %}
+                                            <input type="checkbox" class="form-check-input" id="medicalCouncilCertificateReceivedCheckbox" name="IsMedicalCouncilCertificateReceived">
+                                        {% endif %}
+                                    {% else %}
+                                        <input type="checkbox" class="form-check-input" id="medicalCouncilCertificateReceivedCheckbox" disabled>
+                                        <input type="hidden" name="IsMedicalCouncilCertificateReceived" value="{{ guest.IsMedicalCouncilCertificateReceived }}">
+                                    {% endif %}
+                                    <label class="form-check-label" for="medicalCouncilCertificateReceivedCheckbox">Medical Council Certificate Received</label>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        
+                        <div class="mt-4 text-center">
+                            <button type="submit" class="btn btn-primary">Update Guest Information</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% elif request.query_params.get("guest_id") %}
+            <div class="alert alert-danger mt-4">Guest ID not found.</div>
+        {% endif %}
     </div>
-    <!-- New Button for Barcode Updates -->
+
     <div class="text-center mt-4">
         <button onclick="location.href='/barcode-updates'" class="btn btn-info">Barcode Scanning & Updates</button>
     </div>
-    </div>
-    <footer>
+
+    <footer class="text-center mt-4">
         <button onclick="location.href='/'">Back to Home</button>
         <button onclick="location.href='login.html'">Login Page</button>
         <button>Help: +91-9899339005</button>
     </footer>
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script> 
+    <script>
         document.addEventListener('DOMContentLoaded', function () {
-        var residentialStatusSelect = document.getElementById('residentialStatus');
-        var checkInGroup = document.getElementById('checkInGroup');
-        var checkOutGroup = document.getElementById('checkOutGroup');
-        var hotelNameGroup = document.getElementById('hotelNameGroup');
+            var residentialStatusSelect = document.getElementById('residentialStatus');
+            var residentialDetails = document.getElementById('residentialDetails');
     
-        // Function to toggle visibility of related form fields
-        function toggleResidentialFields(display) {
-            checkInGroup.style.display = display ? 'block' : 'none';
-            checkOutGroup.style.display = display ? 'block' : 'none';
-            hotelNameGroup.style.display = display ? 'block' : 'none';
-        }
+            function toggleResidentialFields() {
+                if (residentialStatusSelect.value === 'residential') {
+                    residentialDetails.style.display = 'block';
+                } else {
+                    residentialDetails.style.display = 'none';
+                }
+            }
     
-        // Event listener for changes to the residential status
-        residentialStatusSelect.addEventListener('change', function() {
-            var isResidential = this.value === 'residential';
-            toggleResidentialFields(isResidential);
+            // Event listener for changes to the residential status
+            residentialStatusSelect.addEventListener('change', toggleResidentialFields);
     
-            // Update hidden input to ensure correct form submission
-            document.getElementById('IsResidentialValue').value = this.value;
+            // Initialize the form fields based on the guest's current residential status
+            toggleResidentialFields();
         });
-    
-        // Initialize the form fields based on the guest's current residential status
-        var initialResidentialStatus = residentialStatusSelect.value;
-        toggleResidentialFields(initialResidentialStatus === 'residential');
-        
-        var shouldDisable = document.getElementById('guestTypeDisabled').value === 'true';
-        var guestTypeDropdown = document.getElementById('guestType');
-        if (shouldDisable) {
-            guestTypeDropdown.setAttribute('disabled', 'disabled');
+    </script>
+
+    <script>
+    document.getElementById('updateGuestForm').addEventListener('submit', function(event) {
+        var facultyGiftCheckbox = document.getElementById('facultyGiftReceivedCheckbox');
+        var guestTypeSelect = document.getElementById('GuestRole');
+        // Check if the faculty gift checkbox is checked and the selected guest type is not 'Faculty'
+        if (facultyGiftCheckbox.checked && guestTypeSelect.value !== 'Faculty') {
+            // Prevent form submission
+            event.preventDefault();
+            // Show warning message
+            alert('Non-Faculty cannot receive a Faculty Gift. Please uncheck the Faculty Gift Received option.');
+            // Optionally, focus on the faculty gift checkbox for user convenience
+            facultyGiftCheckbox.focus();
         }
     });
     </script>
-
 
 </body>
 </html>

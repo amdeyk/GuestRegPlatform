@@ -53,72 +53,170 @@
                     </ul>
                 </div>
             </div>
-        
         <div class="row">
-            <!-- New Section with Buttons for Each Checkbox Page -->
-            <div class="container mt-4 text-center" id="guest-activities-section">
-                <div class="row">
-                    <!-- Button for Guest Check-in -->
-                    <div class="col-md-4 mb-2">
-                        <button onclick="location.href='/checkin'" class="btn btn-primary">Guest Check-in</button>
-                    </div>
-            
-                    <!-- Button for Payment Received -->
-                    <div class="col-md-4 mb-2">
-                        <button onclick="location.href='/payment_received'" class="btn btn-primary">Payment Received</button>
-                    </div>
-            
-                    <!-- Button for Gift Received -->
-                    <div class="col-md-4 mb-2">
-                        <button onclick="location.href='/gift'" class="btn btn-primary">Gift Received</button>
-                    </div>
-            
-                    <!-- Button for Car Received -->
-                    <div class="col-md-4 mb-2">
-                        <button onclick="location.href='/car_received'" class="btn btn-primary">Car Received</button>
-                    </div>
-            
-                    <!-- Button for Lunch Coupon Day 1 -->
-                    <div class="col-md-4 mb-2">
-                        <button onclick="location.href='/lunch_day1'" class="btn btn-primary">Lunch Coupon Day 1</button>
-                    </div>
-            
-                    <!-- Button for Dinner Coupon Day 1 -->
-                    <div class="col-md-4 mb-2">
-                        <button onclick="location.href='/dinner_day1'" class="btn btn-primary">Dinner Coupon Day 1</button>
-                    </div>
-            
-                    <!-- Button for Lunch Coupon Day 2 -->
-                    <div class="col-md-4 mb-2">
-                        <button onclick="location.href='/lunch_day2'" class="btn btn-primary">Lunch Coupon Day 2</button>
-                    </div>
-            
-                    <!-- Button for Dinner Coupon Day 2 -->
-                    <div class="col-md-4 mb-2">
-                        <button onclick="location.href='/dinner_day2'" class="btn btn-primary">Dinner Coupon Day 2</button>
-                    </div>
-            
-                    <!-- Button for Lunch Coupon Day 3 -->
-                    <div class="col-md-4 mb-2">
-                        <button onclick="location.href='/lunch_day3'" class="btn btn-primary">Lunch Coupon Day 3</button>
-                    </div>
-                    <div style="height: 8rem;"></div> <!-- Adjust the height as needed -->
-                    <!-- New Buttons for Critical Updates -->
-                    <div class="alert alert-danger text-center" role="alert">
-                        <strong>Critical Update</strong>
-                    </div>
-                    <div class="text-center mb-3">
-                        <button onclick="location.href='/update-guest-name'" class="btn btn-danger">Update Guest Name</button>
-                        <button onclick="location.href='/update-guest-phone'" class="btn btn-danger">Update Guest Phone Number</button>
-                    </div>
-            
-                    <!-- Add additional buttons for other functionalities as needed -->
+         <!-- Button for Guest Check-in -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Guest Check-in</h5>
+                    <p class="card-text">Update the status of guests as they arrive.</p>
+                    <button onclick="location.href='/checkin'" class="btn btn-primary">Manage Check-in</button>
                 </div>
             </div>
+        </div>
+
+        
+
+        <!-- Button for Payment Received -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Payment Received</h5>
+                    <p class="card-text">Manage and confirm payment receipts.</p>
+                    <button onclick="location.href='/payment_received'" class="btn btn-primary">Manage Payments</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Button for Gift Received -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Gift Received</h5>
+                    <p class="card-text">Record and manage gift distributions.</p>
+                    <button onclick="location.href='/gift'" class="btn btn-primary">Manage Gifts</button>
+                </div>
+            </div>
+        </div>
+        </div>        
+        <!-- Button for Car Received -->
+        <div class="row">
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Car Received</h5>
+                    <p class="card-text">Update the status of car services provided.</p>
+                    <button onclick="location.href='/car_received'" class="btn btn-primary">Manage Car Services</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Button for Lunch Coupon Day 1 -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Lunch Coupon Day 1</h5>
+                    <p class="card-text">Distribute and track Day 1 lunch coupons.</p>
+                    <button onclick="location.href='/lunch_day1'" class="btn btn-primary">Manage Day 1 Lunch</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Button for Dinner Coupon Day 1 -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Dinner Coupon Day 1</h5>
+                    <p class="card-text">Distribute and track Day 1 dinner coupons.</p>
+                    <button onclick="location.href='/dinner_day1'" class="btn btn-primary">Manage Day 1 Dinner</button>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- Button for Lunch Coupon Day 2 -->
+        <div class="row">
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Lunch Coupon Day 2</h5>
+                    <p class="card-text">Distribute and track Day 2 lunch coupons.</p>
+                    <button onclick="location.href='/lunch_day2'" class="btn btn-primary">Manage Day 2 Lunch</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Button for Dinner Coupon Day 2 -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Dinner Coupon Day 2</h5>
+                    <p class="card-text">Distribute and track Day 2 dinner coupons.</p>
+                    <button onclick="location.href='/dinner_day2'" class="btn btn-primary">Manage Day 2 Dinner</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Button for Lunch Coupon Day 3 -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Lunch Coupon Day 3</h5>
+                    <p class="card-text">Distribute and track Day 3 lunch coupons.</p>
+                    <button onclick="location.href='/lunch_day3'" class="btn btn-primary">Manage Day 3 Lunch</button>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <!-- Button for Faculty Gift Management -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Faculty Gift Management</h5>
+                    <p class="card-text">Track and update the distribution of faculty gifts.</p>
+                    <button onclick="location.href='/faculty_gift'" class="btn btn-primary">Manage Faculty Gifts</button>
+                </div>
+            </div>
+        </div>
+        <!-- Button for Conference Certificate Management -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Certificate Management</h5>
+                    <p class="card-text">Update the distribution of conference certificates.</p>
+                    <button onclick="location.href='/conference_certificate'" class="btn btn-primary">Manage Conference Certificates</button>
+                </div>
+            </div>
+        </div>
+        <!-- Button for Medical Council Certificate Management -->
+        <div class="col-md-4 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Medical Council Certificate Mgmt</h5>
+                    <p class="card-text">Track and update the issuance of Medical Council certificates.</p>
+                    <button onclick="location.href='/medical_council_certificate'" class="btn btn-primary">Manage Medical Council Certificates</button>
+                </div>
+            </div>
+        </div>
+
 
         </div>
-    </div>
-
+        <!-- Critical Update for Guest Name -->
+        <div class="row">
+        <div class="col-md-6 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Update Guest Name</h5>
+                    <p class="card-text">Modify the name details of registered guests.</p>
+                    <button onclick="location.href='/update-guest-name'" class="btn btn-danger">Update Name</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Critical Update for Guest Phone Number -->
+        <div class="col-md-6 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Update Guest Phone Number</h5>
+                    <p class="card-text">Correct or update the phone numbers of attendees.</p>
+                    <button onclick="location.href='/update-guest-phone'" class="btn btn-danger">Update Phone</button>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div style="height: 7rem;"></div> <!-- Adjust the height as needed -->
+        </div>
+        </div>  
     <footer>
         <button onclick="location.href='/'">Home</button>
         <button onclick="location.href='/login'">Login Page</button>

@@ -1,0 +1,10 @@
+Update as on 20th Feb 
+- Faculty specific Gift has been added
+- PGT Delegate Faculty and Industry has been added
+- The rules were Faculty will get Special Gift which is only for Faculty
+- Conference Certificate and Medical Council Certificate has been added
+- The Guest name Update and Guest Phone number update is there . Might need to password protect it 
+- Need to put various types of Passwords
+- The ID card has come but yet not integrated into the website. But the Bar Code is working.
+- Not integrating any QR code as of now
+- In employee Dashboard - need to integrate the phone number search also

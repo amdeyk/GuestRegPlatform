@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guest Details - View Only</title>
-    <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+
 </head>
 <body>
     <header class="bg-dark text-white py-3">
@@ -13,7 +14,7 @@
             <h1>Guest Details - View Only</h1>
         </div>
     </header>
-    <!-- Bootstrap Navbar -->
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
         <div class="container">
             <ul class="navbar-nav">
@@ -23,14 +24,13 @@
                 <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
                 <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
                 <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
-                <!-- Add the guest_view link here -->
                 <li class="nav-item"><a class="nav-link" href="/guest_view">Guest View</a></li>
             </ul>
         </div>
     </nav>
+
     <div class="container mt-4">
         <h2 class="text-center mb-4">Guest Information</h2>
-        <!-- Add this form where you want the query space for guest ID or name part -->
         <form action="/view-guest-details" method="get">
             <div class="form-group">
                 <label for="guestQuery">Enter Guest ID or Name:</label>
@@ -40,108 +40,53 @@
         </form>
         <!-- Display Guest Details -->
         {% if guest %}
-            <div class="card mb-4">
-                <div class="card-header">Guest Details</div>
-                <div class="card-body">
-                    <!-- Guest Name, Phone, and Email -->
-                    <div class="form-group">
-                        <label>Guest Name:</label>
-                        <input type="text" class="form-control" value="{{ guest.Name }}" readonly>
+        <div class="card mb-4">
+            <div class="card-header">Guest Details</div>
+            <div class="card-body">
+                <!-- Guest Information -->
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="mb-0"><strong>Guest Name:</strong> {{ guest.Name }}</p>
+                        <p class="mb-0"><strong>Phone:</strong> {{ guest.Phone }}</p>
+                        <p class="mb-0"><strong>Email:</strong> {{ guest.Email }}</p>
+                        <p class="mb-0"><strong>Guest Role:</strong> {{ guest.GuestRole }}</p>
                     </div>
-                    <div class="form-group">
-                        <label>Guest Phone:</label>
-                        <input type="tel" class="form-control" value="{{ guest.Phone }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Guest Email:</label>
-                        <input type="email" class="form-control" value="{{ guest.Email }}" readonly>
-                    </div>
-    
-                    <!-- Additional guest details based on FORM_TO_GUEST_FIELD_MAPPING -->
-                    <div class="form-group">
-                        <label>Check-in Status:</label>
-                        <input type="checkbox" {% if guest.IsCheckedIn == "True" %} checked {% endif %} disabled> Checked In
-                    </div>
-                    <div class="form-group">
-                        <label>Payment Status:</label>
-                        <input type="checkbox" {% if guest.IsPaymentReceived == "True" %} checked {% endif %} disabled> Payment Received
-                    </div>
-                    <div class="form-group">
-                        <label>Gift Received:</label>
-                        <input type="checkbox" {% if guest.IsGiftReceived == "True" %} checked {% endif %} disabled> Yes
-                    </div>
-                    <div class="form-group">
-                        <label>Car Received:</label>
-                        <input type="checkbox" {% if guest.IsCarReceived == "True" %} checked {% endif %} disabled> Yes
-                    </div>
-                    <div class="form-group">
-                        <label>Car Number:</label>
-                        <input type="text" class="form-control" value="{{ guest.CarNumber }}" readonly>
-                    </div>
-                    <!-- Meal Coupons -->
-                    <div class="form-group">
-                        <label>Lunch Day 1:</label>
-                        <input type="checkbox" {% if guest.IsLunchDay1 == "True" %} checked {% endif %} disabled> Provided
-                    </div>
-                    <div class="form-group">
-                        <label>Dinner Day 1:</label>
-                        <input type="checkbox" {% if guest.IsDinnerDay1 == "True" %} checked {% endif %} disabled> Provided
-                    </div>
-                    <div class="form-group">
-                        <label>Lunch Day 2:</label>
-                        <input type="checkbox" {% if guest.IsLunchDay2 == "True" %} checked {% endif %} disabled> Provided
-                    </div>
-                    <div class="form-group">
-                        <label>Dinner Day 2:</label>
-                        <input type="checkbox" {% if guest.IsDinnerDay2 == "True" %} checked {% endif %} disabled> Provided
-                    </div>
-                    <div class="form-group">
-                        <label>Lunch Day 3:</label>
-                        <input type="checkbox" {% if guest.IsLunchDay3 == "True" %} checked {% endif %} disabled> Provided
-                    </div>
-                    <!-- Residential Status -->
-                    <div class="form-group">
-                        <label>Residential Status:</label>
-                        <input type="checkbox" {% if guest.IsResidential == "True" %} checked {% endif %} disabled> Residential
-                    </div>
-                    <!-- Eligible for Car -->
-                    <div class="form-group">
-                        <label>Eligible for Car:</label>
-                        <input type="checkbox" {% if guest.IsEligibleCar == "True" %} checked {% endif %} disabled> Yes
-                    </div>
-                    <!-- Check-In and Check-Out Dates -->
-                    <div class="form-group">
-                        <label>Check-In Date:</label>
-                        <input type="text" class="form-control" value="{{ guest.CheckIn }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Check-Out Date:</label>
-                        <input type="text" class="form-control" value="{{ guest.CheckOut }}" readonly>
-                    </div>
-                    <!-- Hotel Name -->
-                    <div class="form-group">
-                        <label>Hotel Name:</label>
-                        <input type="text" class="form-control" value="{{ guest.HotelName }}" readonly>
-                    </div>
-                    <!-- Guest Type -->
-                    <div class="form-group">
-                        <label>Guest Type:</label>
-                        <input type="text" class="form-control" value="{{ guest.GuestType }}" readonly>
+                    <div class="col-sm-6">
+                        <p class="mb-0"><strong>Residential Status:</strong> {{ "Yes" if guest.IsResidential == "True" else "No" }}</p>
+                        <p class="mb-0"><strong>Check-In Date:</strong> {{ guest.CheckIn }}</p>
+                        <p class="mb-0"><strong>Check-Out Date:</strong> {{ guest.CheckOut }}</p>
+                        <p class="mb-0"><strong>Hotel Name:</strong> {{ guest.HotelName }}</p>
                     </div>
                 </div>
+                <!-- Additional Details -->
+                <div class="mt-3">
+                    <p class="mb-0"><strong>Checked In:</strong> {{ "Yes" if guest.IsCheckedIn == "True" else "No" }}</p>
+                    <p class="mb-0"><strong>Payment Received:</strong> {{ "Yes" if guest.IsPaymentReceived == "True" else "No" }}</p>
+                    <p class="mb-0"><strong>Gift Received:</strong> {{ "Yes" if guest.IsGiftReceived == "True" else "No" }}</p>
+                    <p class="mb-0"><strong>Car Received:</strong> {{ "Yes" if guest.IsCarReceived == "True" else "No" }}</p>
+                    <p class="mb-0"><strong>Car Number:</strong> {{ guest.CarNumber }}</p>
+                    <!-- Meal Coupons -->
+                    <p class="mb-0"><strong>Lunch Day 1:</strong> {{ "Provided" if guest.IsLunchDay1 == "True" else "Not Provided" }}</p>
+                    <p class="mb-0"><strong>Dinner Day 1:</strong> {{ "Provided" if guest.IsDinnerDay1 == "True" else "Not Provided" }}</p>
+                    <p class="mb-0"><strong>Lunch Day 2:</strong> {{ "Provided" if guest.IsLunchDay2 == "True" else "Not Provided" }}</p>
+                    <p class="mb-0"><strong>Dinner Day 2:</strong> {{ "Provided" if guest.IsDinnerDay2 == "True" else "Not Provided" }}</p>
+                    <p class="mb-0"><strong>Lunch Day 3:</strong> {{ "Provided" if guest.IsLunchDay3 == "True" else "Not Provided" }}</p>
+                    <!-- Certificates -->
+                    <p class="mb-0"><strong>Faculty Gift Received:</strong> {{ "Yes" if guest.IsFacultyGiftReceived == "True" else "No" }}</p>
+                    <p class="mb-0"><strong>Conference Certificate Received:</strong> {{ "Yes" if guest.IsConferenceCertificateReceived == "True" else "No" }}</p>
+                    <p class="mb-0"><strong>Medical Council Certificate Received:</strong> {{ "Yes" if guest.IsMedicalCouncilCertificateReceived == "True" else "No" }}</p>
+                </div>
             </div>
+        </div>
         {% else %}
-            <div class="alert alert-warning">
-                No guest details found. Please try again with a different ID or name.
-            </div>
+        <div class="alert alert-warning">No guest details found. Please try again.</div>
         {% endif %}
-    <div style="height: 6rem;"></div> <!-- Adjust the height as needed -->
     </div>
-    
-    <footer class="text-center mt-4">
-        <button onclick="location.href='/'" class="btn btn-secondary">Back to Home</button>
+    <div style="height: 8rem;"></div> <!-- Adjust the height as needed -->
+    <footer class="text-center">
+        <a href="/" class="btn btn-secondary">Back to Home</a>
     </footer>
-    
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

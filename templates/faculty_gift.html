@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Gift Management</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Header with Bootstrap styles -->
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <h1 class="text-center">Faculty Gift Management</h1>
+        </div>
+    </header>
+
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary justify-content-center">
+        <div class="container">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/guest_registration">Guest Registration</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin_dashboard">Admin Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/employee_dashboard">Employee Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view_guest">View Guest</a></li>
+                <li class="nav-item"><a class="nav-link" href="/report">Generate Report</a></li>
+                <li class="nav-item"><a class="nav-link" href="/manage_guest">Manage Guest</a></li>
+                <!-- Add any additional navigation links here -->
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Manage Faculty Gift Status</h2>
+
+        <!-- Form for Guest ID Input -->
+        <form action="/fetch-guest-faculty-gift" method="get">
+            <div class="form-group">
+                <label for="guestIdInput">Enter Guest ID:</label>
+                <input type="text" class="form-control" id="guestIdInput" name="guest_id" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Fetch Guest Details</button>
+        </form>
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+        <!-- Display Guest Details for Faculty Gift Status Update -->
+        {% if guest %}
+            <div class="card mb-4">
+                <div class="card-header">Update Faculty Gift Status</div>
+                <div class="card-body">
+                    <form action="/submit-guest-faculty-gift" method="post">
+                        <input type="hidden" name="guest_id" value="{{ guest.ID }}">
+
+                        <div class="form-group">
+                            <label for="guestName">Guest Name:</label>
+                            <input type="text" class="form-control" id="guestName" name="guest_name" value="{{ guest.Name }}" readonly>
+                        </div>
+
+                        <!-- Faculty Gift Status Update Button -->
+                        {% if guest.IsFacultyGiftReceived == "True" %}
+                            <div class="alert alert-info">Faculty gift already received.</div>
+                            <button type="button" class="btn btn-danger btn-lg" disabled>X</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-success btn-lg">Mark Faculty Gift as Received</button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="warningModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="warningModalLabel">Warning</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Non Faculty Cannot receive Faculty Gift. Please uncheck the Faculty Gift Received box if you want to proceed.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+        <button onclick="location.href='/'">Home</button>
+        <button onclick="location.href='/login'">Login Page</button>
+        <button>Help: +91-9899339005</button>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Example condition - replace this with your actual condition
+      var shouldShowWarning = false; // Set this based on your condition or dynamically
+
+      if (shouldShowWarning) {
+        $('#warningModal').modal('show');
+      }
+    });
+    </script>
+</body>
+</html>

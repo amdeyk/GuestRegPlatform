@@ -14,7 +14,6 @@ from barcode.writer import ImageWriter
 import io
 import configparser
 import shutil
-from datetime import datetime
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import Optional, ClassVar
@@ -22,7 +21,7 @@ import codecs
 import json
 from urllib.parse import parse_qs
 from fastapi import File, UploadFile
-from typing import Tuple
+from typing import Tuple, List, Dict
 from fastapi.responses import JSONResponse
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from io import BytesIO
@@ -36,6 +35,20 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Pydantic models define the structure of requests for data validation and serialization.
 # These models ensure valid data is received and sent in API requests, enhancing data integrity.
+
+# Paths to background images for each role
+BACKGROUND_IMAGES = {
+    "Delegate": "./static/delegate.jpg",
+    "Faculty": "./static/faculty.jpg",
+    "Industry": "./static/industry.jpg",
+    "Pgt": "./static/pgt.jpg",
+    "Event": "./static/event.jpg",
+}
+
+# Adjust paths as necessary
+FONT_PATH_BOLD = "./static/Montserrat-Bold.ttf"
+FONT_PATH_REGULAR = "./static/Montserrat-Regular.ttf"
+CSV_FILE_GUESTS = "./data/guests.csv"
 
 class UpdateGuestInfo(BaseModel):
     # A model representing the schema for updating guest information.
@@ -52,8 +65,10 @@ class UpdateGuestInfo(BaseModel):
     isLunchDay2: bool = False
     isDinnerDay2: bool = False
     isLunchDay3: bool = False
-    isFaculty: bool = False
-    isIndustry: bool = False
+    guestRole: str  # This replaces isFaculty and isIndustry
+    isFacultyGiftReceived: bool = False
+    isConferenceCertificateReceived: bool = False
+    isMedicalCouncilCertificateReceived: bool = False
     isResidential: bool = False
     isEligibleCar: bool = False
     hotelName: str = ""
@@ -89,26 +104,24 @@ software_version = config['DEFAULT']['SoftwareVersion']
 
 
 
-# Define a dictionary to map form field names to your guest record field names
 FORM_TO_GUEST_FIELD_MAPPING = {
     'isCheckedIn': 'IsCheckedIn',
     'isPaymentReceived': 'IsPaymentReceived',
     'isGiftReceived': 'IsGiftReceived',
     'isCarReceived': 'IsCarReceived',
+    'carNumber': 'CarNumber',
     'isLunchDay1': 'IsLunchDay1',
     'isDinnerDay1': 'IsDinnerDay1',
     'isLunchDay2': 'IsLunchDay2',
     'isDinnerDay2': 'IsDinnerDay2',
     'isLunchDay3': 'IsLunchDay3',
-    'isResidential': 'IsResidential',
-    'isEligibleCar': 'IsEligibleCar',
-    'guestType': 'GuestType',  # Assuming this field should map to 'GuestType'
-    'check_in': 'CheckIn',
-    'check_out': 'CheckOut',
-    'hotel_name': 'HotelName',
-    'carNumber': 'CarNumber'
-    # Add other form-to-guest field mappings as needed
+    'guestType': 'GuestType',
+    'isFacultyGiftReceived': 'IsFacultyGiftReceived',
+    'isConferenceCertificateReceived': 'IsConferenceCertificateReceived',
+    'isMedicalCouncilCertificateReceived': 'IsMedicalCouncilCertificateReceived',
+    # Add or modify mappings as necessary for your application logic
 }
+
 
 
 
@@ -181,17 +194,19 @@ def read_csv_data(file_path):
     return data
 
 def write_csv_data(file_path, data, fieldnames):
-    # Generate a timestamped backup file name
     """
     Writes guest data to a CSV file, creating a timestamped backup of the existing file before overwriting.
     This ensures data integrity by maintaining backups of guest data at each write operation.
     It's linked to routes that modify guest data, providing a unified function for data writing and backup.
+
     Input:
         file_path (str): The path to the CSV file to write data to.
         data (list): A list of dictionaries, each representing a guest's information to be written.
         fieldnames (list): A list of strings representing the CSV column headers.
+
     Output:
         None, but creates or updates a CSV file on disk.
+
     Dependencies:
         csv: For writing CSV file format.
         shutil, datetime: For creating timestamped backup files.
@@ -207,10 +222,11 @@ def write_csv_data(file_path, data, fieldnames):
         # Update fieldnames to include all necessary fields
         fieldnames = [
             "ID", "Name", "Email", "Phone", "CheckIn", "CheckOut", "AmountGiven",
-            "IsCheckedIn", "IsPaymentReceived", "IsGiftReceived", "IsCarReceived", 
+            "IsCheckedIn", "IsPaymentReceived", "IsGiftReceived", "IsCarReceived", "HotelName", 
             "CarNumber", "IsLunchDay1", "IsDinnerDay1", "IsLunchDay2", "IsDinnerDay2", 
-            "IsLunchDay3", "IsFaculty", "IsIndustry", "IsResidential", "IsEligibleCar",
-            "HotelName", "RecordCheck"
+            "IsLunchDay3", "GuestRole", "IsResidential", "IsFacultyGiftReceived", "IsConferenceCertificateReceived",
+            "IsMedicalCouncilCertificateReceived"
+            # Ensure all new fields are included here
         ]
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
@@ -246,7 +262,7 @@ def generate_id(name: str, phone: str) -> str:
     random_number = f"{random.randint(100, 999999):06d}"
     return prefix + random_number
 
-def validate_and_normalize_row(row: dict, row_index: int) -> Tuple[bool, dict, list]:
+def validate_and_normalize_row(row: dict, row_index: int) -> Tuple[bool, dict, List[Dict]]:
     """Validate and normalize a row of CSV data."""
     errors = []
     normalized_row = {}
@@ -261,23 +277,56 @@ def validate_and_normalize_row(row: dict, row_index: int) -> Tuple[bool, dict, l
         normalized_row["Name"] = normalized_name
 
     # Validate and normalize Phone
-    phone = normalize_phone_number(row.get("Phone", ""))
-    if phone and not validate_phone_number(phone):
+    phone = row.get("Phone", "").strip()
+    if phone and not phone.isdigit():
         errors.append({"row": row_index, "field": "Phone", "value": phone, "error": "Invalid phone number format."})
     else:
         normalized_row["Phone"] = phone
 
     # Validate and normalize Email
     email = row.get("Email", "").strip().lower()
-    # Validate email only if it's not blank
-    if email and not validate_email(email):
+    if email and not re.match(r"[^@]+@[^@]+\.[^@]+", email):
         errors.append({"row": row_index, "field": "Email", "value": email, "error": "Invalid email format."})
-    elif email:
-        normalized_row["Email"] = email  # Already normalized (lowercased)
+    else:
+        normalized_row["Email"] = email
+
+    # Validate and normalize AmountGiven
+    amount_given = row.get("AmountGiven", "").strip()
+    try:
+        normalized_amount_given = float(amount_given) if amount_given else 0.0
+        normalized_row["AmountGiven"] = normalized_amount_given
+    except ValueError:
+        errors.append({"row": row_index, "field": "AmountGiven", "value": amount_given, "error": "Invalid amount format."})
+
+    # Validate and normalize GuestRole
+    guest_role_raw = row.get("GuestRole", "").strip()
+    guest_role_lower = guest_role_raw.lower()  # Convert to lowercase for comparison
+    
+    # Map from lowercase to program's required capitalization
+    valid_roles = {
+        "delegate": "Delegate",
+        "faculty": "Faculty",
+        "industry": "Industry",
+        "pgt": "Pgt",
+        "event": "Event"
+    }
+    
+    # Correct capitalization or default to "Delegate"
+    guest_role = valid_roles.get(guest_role_lower, "Delegate")
+    normalized_row["GuestRole"] = guest_role
+    
+    if guest_role_raw.title() not in valid_roles.values():
+        errors.append({
+            "row": row_index,
+            "field": "GuestRole",
+            "value": guest_role_raw,
+            "error": "Invalid guest role."
+        })
+
 
     # Generate ID if no errors found
     if not errors:
-        normalized_row["ID"] = generate_id(normalized_name, phone)
+        normalized_row["ID"] = generate_id(normalized_name, phone)  # Assuming generate_id is a function you have defined
 
     return not errors, normalized_row, errors
 
@@ -331,6 +380,29 @@ def textsize(text, font, draw):
     _, _, width, height = draw.textbbox((0, 0), text, font=font)
     return width, height
 
+
+
+
+@app.get("/files", response_class=HTMLResponse)
+async def list_files(request: Request):
+    data_dir = "./data"
+    files = os.listdir(data_dir)
+    files_info = []
+    for file in files:
+        file_path = os.path.join(data_dir, file)
+        modification_time = os.path.getmtime(file_path)
+        date_time = datetime.fromtimestamp(modification_time).strftime('%Y-%m-%d %H:%M:%S')
+        files_info.append((file, date_time))
+    return templates.TemplateResponse("list_files.html", {"request": request, "files": files_info})
+
+
+
+@app.get("/files/download")
+async def download_file(filename: str):
+    file_path = os.path.join("./data", filename)
+    if os.path.exists(file_path):
+        return FileResponse(path=file_path, filename=filename)
+    return {"error": "File not found"}
 
 
 @app.get("/view-guest-details", response_class=HTMLResponse)
@@ -420,11 +492,12 @@ async def submit_guest_registration(request: Request,
                                     name: str = Form(...), 
                                     email: str = Form(...), 
                                     phone: str = Form(...), 
-                                    type1: str = Form(...), 
+                                    guestRole: str = Form(...),  # Updated to guestRole
                                     residential_status: str = Form(...),
                                     check_in: Optional[str] = Form(None),
                                     check_out: Optional[str] = Form(None),
                                     amount_given: Optional[float] = Form(None)):
+    
     """
     Handles submission of the guest registration form.
     Validates input data using Pydantic models, writes new guest data to CSV, and returns a success message.
@@ -436,7 +509,7 @@ async def submit_guest_registration(request: Request,
     Dependencies:
         Pydantic models for data validation, `write_csv_data` for updating CSV files.
     """
-    print(name, email, phone, type, residential_status, check_in, check_out, amount_given)
+    print(name, email, phone, guestRole, residential_status, check_in, check_out, amount_given)
     # Check if the phone number is at least 10 digits long
     if len(phone) < 10:
         return templates.TemplateResponse("guest_registration.html", {"request": request, "message": "Phone number must be at least 10 digits long"})
@@ -445,21 +518,24 @@ async def submit_guest_registration(request: Request,
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
         return templates.TemplateResponse("guest_registration.html", {"request": request, "message": "Invalid email format"})
 
-    # Logic to determine isFaculty, isIndustry, and isResidential
-    is_faculty = type1 == 'faculty'
-    is_industry = type1 == 'industry'
+    # Logic to determine  isResidential
+
     is_residential = residential_status == 'residential'
 
     # Validate check-in and check-out dates if residential
     if is_residential:
-        try:
-            check_in_date = datetime.fromisoformat(check_in)
-            check_out_date = datetime.fromisoformat(check_out)
-        except ValueError:
-            return templates.TemplateResponse("guest_registration.html", {"request": request, "message": "Invalid date format. Please use the proper date format."})
-        
-        if check_out_date <= check_in_date:
-            return templates.TemplateResponse("guest_registration.html", {"request": request, "message": "Check-out date must be later than check-in date"})
+        if check_in and check_out:  # Ensure both check_in and check_out are provided and not empty
+            try:
+                check_in_date = datetime.fromisoformat(check_in)
+                check_out_date = datetime.fromisoformat(check_out)
+                if check_out_date <= check_in_date:
+                    return templates.TemplateResponse("guest_registration.html", {"request": request, "message": "Check-out date must be later than check-in date"})
+            except ValueError:
+                return templates.TemplateResponse("guest_registration.html", {"request": request, "message": "Invalid date format. Please use the proper date format."})
+        else:
+            # Handle the case where check-in or check-out dates are missing or empty
+            return templates.TemplateResponse("guest_registration.html", {"request": request, "message": "Both check-in and check-out dates are required for residential guests."})
+
 
     # Prevent re-registration with the same phone number
     guests = read_csv_data(CSV_FILE_GUESTS)
@@ -468,21 +544,35 @@ async def submit_guest_registration(request: Request,
 
     # Create a dictionary for the new guest including the new fields (isFaculty, isIndustry, isResidential)
     guest_id = name[:2] + phone if len(name) >= 2 else name + phone
+    # Adjusted to include guestRole and new fields in the guest dictionary
     new_guest = {
         "ID": guest_id,
         "Name": name,
         "Email": email,
         "Phone": phone,
+        "GuestRole": guestRole,  # Updated to use guestRole
+        "IsResidential": is_residential,
         "CheckIn": check_in if is_residential else "",
         "CheckOut": check_out if is_residential else "",
-        "AmountGiven": amount_given if not is_residential else 0.0,
-        "IsFaculty": is_faculty,
-        "IsIndustry": is_industry,
-        "IsResidential": is_residential
+        "AmountGiven": amount_given,
+        "IsFacultyGiftReceived": False,  # Default value since it's not part of form
+        "IsConferenceCertificateReceived": False,  # Default value since it's not part of form
+        "IsMedicalCouncilCertificateReceived": False,  # Default value since it's not part of form
     }
 
+
+    guests = read_csv_data(CSV_FILE_GUESTS)
     guests.append(new_guest)
-    fieldnames = ["ID", "Name", "Email", "Phone", "CheckIn", "CheckOut", "AmountGiven", "IsFaculty", "IsIndustry", "IsResidential"]
+    fieldnames = [
+        "ID", "Name", "Email", "Phone", "CheckIn", "CheckOut", "AmountGiven",
+        "IsCheckedIn", "IsPaymentReceived", "IsGiftReceived", "IsCarReceived", 
+        "CarNumber", "IsLunchDay1", "IsDinnerDay1", "IsLunchDay2", "IsDinnerDay2", 
+        "IsLunchDay3", "GuestRole", "IsResidential", 
+        "HotelName", "IsFacultyGiftReceived", "IsConferenceCertificateReceived",
+        "IsMedicalCouncilCertificateReceived"
+    ]
+
+    # Add new fieldnames as necessary, for example: "IsFacultyGiftReceived"
     write_csv_data(CSV_FILE_GUESTS, guests, fieldnames)
 
     return templates.TemplateResponse("guest_registration.html", {"request": request, "message": "Guest registered successfully"})
@@ -538,90 +628,38 @@ async def update_guest_info(request: Request):
     """
     form_data = await request.form()
     data = {key: value for key, value in form_data.items()}
-    print("Received form data:", data)  # Log the received form data
+    print("Received form data:", data)
 
-    # Define the list of checkbox field names
-    checkbox_fields = ['IsCheckedIn', 'IsPaymentReceived', 'IsGiftReceived', 'IsCarReceived', 
-                       'IsLunchDay1', 'IsDinnerDay1', 'IsLunchDay2', 'IsDinnerDay2', 'IsLunchDay3', 
-                       'IsResidential', 'IsEligibleCar', 'guestType']
+    # Handle checkboxes explicitly
+    checkbox_fields = [
+        'IsCheckedIn', 'IsPaymentReceived', 'IsGiftReceived', 'IsCarReceived', 
+        'IsLunchDay1', 'IsDinnerDay1', 'IsLunchDay2', 'IsDinnerDay2', 'IsLunchDay3', 
+        'IsFacultyGiftReceived', 'IsConferenceCertificateReceived', 
+        'IsMedicalCouncilCertificateReceived', 'IsResidential'
+    ]
 
-    # Handle checkboxes and map form fields to guest record fields
-    for form_field, guest_field in FORM_TO_GUEST_FIELD_MAPPING.items():
-        if guest_field in checkbox_fields:
-            # Explicitly check for 'on' value for checkboxes
-            data[guest_field] = form_data.get(form_field, 'off') == 'on'
-        else:
-            data[guest_field] = data.get(form_field, '')
-        print(f"Processed {form_field} to {guest_field}: {data[guest_field]}")  # Log field processing
+    # Convert 'on'/'off' to 'True'/'False' for checkboxes
+    for key in checkbox_fields:
+        data[key] = 'True' if data.get(key) == 'on' or data.get(key) == 'True' else 'False'
 
-    # Handling Guest Type
-    if 'guestType' in data:
-        if data['guestType'] == 'faculty':
-            data['IsFaculty'] = 'True'
-            data['IsIndustry'] = 'False'
-        elif data['guestType'] == 'industry':
-            data['IsFaculty'] = 'False'
-            data['IsIndustry'] = 'True'
-        else: # delegate
-            data['IsFaculty'] = 'False'
-            data['IsIndustry'] = 'False'
-    print("Guest Type - IsFaculty:", data['IsFaculty'], "IsIndustry:", data['IsIndustry'])  # Log guest type
+    # Ensure guestRole is directly used
+    # data['GuestRole'] = guestRole
+
+    # Assuming guestRole directly maps to GuestRole in CSV and no longer requires conversion
+    guest_role = data.get('guestRole', 'Delegate')  # Ensure default is 'Delegate'
+    
 
     # Read all guest data
     guests = read_csv_data(CSV_FILE_GUESTS)
-
-    # Create a copy of the original data
-    original_guests = [guest.copy() for guest in guests]
-
+    # guests['GuestRole'] = guest_role
     # Update logic
     guest_found = False
     for guest in guests:
         if guest['ID'] == data['guest_id']:
-            print(f"Found guest with ID {data['guest_id']} for update.")  # Log when guest is found
-            
-            # Preserve original values of IsFaculty and IsIndustry
-            original_is_faculty = guest['IsFaculty']
-            original_is_industry = guest['IsIndustry']
-    
-            # Update fields only if they are present in the form submission
-            for guest_field in FORM_TO_GUEST_FIELD_MAPPING.values():
-                if guest_field in guest:
-                    if guest_field in checkbox_fields:
-                        if guest_field in data:
-                            if guest[guest_field] == 'False' or data[guest_field]:
-                                print(f"Updating {guest_field} from {guest[guest_field]} to {data[guest_field]}")  # Log updates
-                                guest[guest_field] = data[guest_field]
-                            else:
-                                print(f"Skipping update for {guest_field} as it would change True to False")
-                        else:
-                            print(f"Checkbox field {guest_field}: No change (not in form data)")
-                    else:
-                        # Update other fields if new value is not empty
-                        if data.get(guest_field, '') != '':
-                            print(f"Updating {guest_field} from {guest[guest_field]} to {data[guest_field]}")  # Log updates
-                            guest[guest_field] = data[guest_field]
-    
-            # Handle GuestType - prevent change if already set
-            if original_is_faculty == 'True':
-                guest['IsFaculty'] = 'True'
-                guest['IsIndustry'] = 'False'
-            elif original_is_industry == 'True':
-                guest['IsFaculty'] = 'False'
-                guest['IsIndustry'] = 'True'
-            else:
-                # Only update if not already set
-                guest['IsFaculty'] = 'True' if data['IsFaculty'] == 'True' else 'False'
-                guest['IsIndustry'] = 'True' if data['IsIndustry'] == 'True' else 'False'
-    
-            # Handle residential-specific fields
-            if guest['IsResidential']:
-                if 'CheckIn' in data and data['CheckIn'] != '':
-                    guest['CheckIn'] = data['CheckIn']
-                if 'CheckOut' in data and data['CheckOut'] != '':
-                    guest['CheckOut'] = data['CheckOut']
-                if 'HotelName' in data and data['HotelName'] != '':
-                    guest['HotelName'] = data['HotelName']
-    
+            print(f"Found guest with ID {data['guest_id']} for update.")
+            for field in checkbox_fields + ['GuestRole', 'CheckIn', 'CheckOut', 'HotelName', 'AmountGiven']:
+                if field in data:
+                    guest[field] = data[field]
             guest_found = True
             break
 
@@ -629,19 +667,16 @@ async def update_guest_info(request: Request):
         print(f"Guest ID {data['guest_id']} not found.")
         return {"message": "Guest ID not found"}
 
-    # Integrity test: Compare original_guests with guests to ensure only intended updates are made
-    if not integrity_test_passed(original_guests, guests):
-        print("Integrity test failed.")
-        return {"message": "Data integrity check failed"}
-
+    # Define updated fieldnames including new fields
     fieldnames = [
-            "ID", "Name", "Email", "Phone", "CheckIn", "CheckOut", "AmountGiven",
-            "IsCheckedIn", "IsPaymentReceived", "IsGiftReceived", "IsCarReceived", 
-            "CarNumber", "IsLunchDay1", "IsDinnerDay1", "IsLunchDay2", "IsDinnerDay2", 
-            "IsLunchDay3", "IsFaculty", "IsIndustry", "IsResidential", "IsEligibleCar",
-            "HotelName", "RecordCheck"
-        ]
-
+        "ID", "Name", "Email", "Phone", "CheckIn", "CheckOut", "AmountGiven",
+        "IsCheckedIn", "IsPaymentReceived", "IsGiftReceived", "IsCarReceived", 
+        "CarNumber", "IsLunchDay1", "IsDinnerDay1", "IsLunchDay2", "IsDinnerDay2", 
+        "IsLunchDay3", "GuestRole", "IsResidential", 
+        "HotelName", "IsFacultyGiftReceived", "IsConferenceCertificateReceived",
+        "IsMedicalCouncilCertificateReceived"
+    ]
+    print("Final data to write:", guest)
     # Writing the updated data to CSV
     write_csv_data(CSV_FILE_GUESTS, guests, fieldnames)
     print("Data successfully written to CSV.")
@@ -945,68 +980,64 @@ async def generate_barcode(request: Request, user_id: str = Form(...)):
         # Handle case where guest ID is not found
         return {"error": "Guest ID not found"}
 
-    # Create an image
-    image_width = 500  # Approx 5 inches, assuming 100 pixels per inch
-    image_height = 700  # Approx 3 inches
-    image = Image.new('RGB', (image_width, image_height), 'white')
-    draw = ImageDraw.Draw(image)
+    guest_role = guest.get('GuestRole', 'Delegate')  # Default to 'Delegate' if not found
+
+    # Select the appropriate background image based on the guest role
+    background_image_path = BACKGROUND_IMAGES.get(guest_role, BACKGROUND_IMAGES['Delegate'])
+    if not os.path.exists(background_image_path):
+        return {"error": "Background image not found"}
+    
+    main_image = Image.open(background_image_path)
+    draw = ImageDraw.Draw(main_image)
     
     # Define fonts
-    try:
-        # Adjust the path to your font file
-        font_regular = ImageFont.truetype("arial.ttf", 24)
-        font_large = ImageFont.truetype("arial.ttf", 48)  # Conference name font size doubled
-    except IOError:
-        font_regular = ImageFont.load_default()
-        font_large = ImageFont.load_default()
-
-    # Calculate text sizes and positions
-    conference_text = "AROI Conference"
-    name_text = f"Name: {guest['Name']}"
-    phone_text = f"Phone: {guest['Phone']}"
-    id_text = f"ID: {guest['ID']}"
-
-    # Draw blue strip for conference name
-    padding = int(font_large.size * 0.2)  # 20% padding around font height
-    text_width, text_height = textsize(conference_text, font_large, draw)
-    strip_height = text_height + padding * 2
-    strip_top = 50
-    draw.rectangle([(0, strip_top), (image_width, strip_top + strip_height)], fill="blue")
-
-    # Draw conference text in white on the blue strip
-    text_x = (image_width - text_width) / 2
-    text_y = strip_top + padding
-    draw.text((text_x, text_y), conference_text, fill="white", font=font_large)
-
-    # Adjust current_height for next texts
-    current_height = strip_top + strip_height + 20  # Adding some space below the strip
-
-    # Drawing other texts
-    draw.text(((image_width - text_width) / 2, current_height), name_text, fill="black", font=font_regular)
-    current_height += 40
-    draw.text(((image_width - text_width) / 2, current_height), phone_text, fill="black", font=font_regular)
-    current_height += 40
-    draw.text(((image_width - text_width) / 2, current_height), id_text, fill="black", font=font_regular)
-    current_height += 160  # Increase space before barcode for visual separation
-
+    font_bold = ImageFont.truetype(FONT_PATH_BOLD, 70)
+    font_regular = ImageFont.truetype(FONT_PATH_REGULAR, 55)
+    
     # Generate and add barcode
     barcode_io = BytesIO()
-    barcode = Code128(user_id, writer=ImageWriter())
+    barcode = Code128(guest['ID'], writer=ImageWriter())
     barcode.write(barcode_io)
     barcode_io.seek(0)
     barcode_image = Image.open(barcode_io)
     
-    # Using default resampling for simplicity
-    barcode_image = barcode_image.resize((image_width - 40, 100))
-    image.paste(barcode_image, (20, current_height))
+    # Resize barcode and paste it onto the main image
+    barcode_size = (600, 300)  # Adjust barcode size as needed
+    barcode_image_resized = barcode_image.resize(barcode_size)
+    main_image_width, main_image_height = main_image.size
+    barcode_x = (main_image_width - barcode_size[0]) // 2
+    barcode_y = main_image_height - barcode_size[1] - 350  # Adjust as needed
+    main_image.paste(barcode_image_resized, (barcode_x, barcode_y))
+
+    # Add guest name and designation
+    name_text_width = draw.textlength(guest['Name'], font=font_bold)
+    name_x = (main_image_width - name_text_width) // 2
+    name_y = barcode_y + 330  # Adjust spacing above the barcode as needed
+    draw.text((name_x, name_y), guest['Name'], fill="black", font=font_bold)
+
+    # Center-align guest designation with lines
+    designation_text_width = draw.textlength(guest['GuestRole'], font=font_regular)
+    designation_x = (main_image_width - designation_text_width) // 2
+    designation_y = name_y + 100  # Adjust spacing below the name as needed
+    draw.text((designation_x, designation_y), guest['GuestRole'], fill="black", font=font_regular)    
     
-    # Save final image to BytesIO object and prepare for response
+    # Draw lines on either side of the designation
+    line_length = 200  # Adjust as needed
+    line_spacing = 15  # Space between line and text
+    line_y = designation_y + font_regular.size -15  # Adjust vertical position as needed
+
+    draw.line((designation_x - line_length - line_spacing, line_y, designation_x - line_spacing, line_y), fill="black", width=10)
+    draw.line((designation_x + designation_text_width + line_spacing, line_y, designation_x + designation_text_width + line_length + line_spacing, line_y), fill="black", width=10)
+
+    # Format the filename with ID, Name, and GuestRole
+    filename = f"{guest['ID']}_{guest['Name']}_{guest['GuestRole']}_barcode.png"
+    # Save the modified image to a BytesIO object for response
     final_io = BytesIO()
-    image.save(final_io, 'PNG')
+    main_image.save(final_io, format='PNG', quality=95)
     final_io.seek(0)
-    
+
     headers = {
-        'Content-Disposition': f'attachment; filename={user_id}_barcode.png'
+        'Content-Disposition': f'attachment; filename="{filename}"'
     }
     return StreamingResponse(final_io, media_type="image/png", headers=headers)
 
@@ -1069,13 +1100,19 @@ async def manage_guest(request: Request):
     # You might want to pass any necessary data to the template
     return templates.TemplateResponse("manage_guest.html", {"request": request})
 
+## This is the Independent Page
+@app.get("/pos_mgmt", response_class=HTMLResponse)
+async def pos_mgmt(request: Request):
+    # If you need to pass any data to the template, you can do so by adding it to the context dictionary
+    return templates.TemplateResponse("pos_mgmt_page.html", {"request": request})
+# will have to make all the sub-pages seperately now
 
 @app.get("/fetch-guest")
 async def fetch_guest(request: Request):
     guest_id = request.query_params.get("guest_id")
     guests = read_csv_data(CSV_FILE_GUESTS)
     guest_details = next((guest for guest in guests if guest['ID'] == guest_id), None)
-    #print('the guest details : '. guest_details)
+    print('the guest details : ', guest_details)
     if guest_details:
         return templates.TemplateResponse("employee_dashboard.html", {"request": request, "guest": guest_details, "guests": guests})
     else:
@@ -1459,6 +1496,149 @@ async def submit_guest_lunch_day3(request: Request, guest_id: str = Form(...)):
     write_csv_data(CSV_FILE_GUESTS, guests, fieldnames)
     
     return RedirectResponse(url="/lunch_day3?update_success=true", status_code=303)
+
+# Display the faculty gift management page
+@app.get("/faculty_gift")
+async def faculty_gift_page(request: Request):
+    return templates.TemplateResponse("faculty_gift.html", {"request": request})
+
+# Fetch a specific guest's faculty gift status
+@app.get("/fetch-guest-faculty-gift")
+async def fetch_guest_faculty_gift(request: Request, guest_id: str):
+    guests = read_csv_data(CSV_FILE_GUESTS)
+    guest_details = next((guest for guest in guests if guest['ID'] == guest_id), None)
+    if guest_details:
+        return templates.TemplateResponse("faculty_gift.html", {"request": request, "guest": guest_details})
+    else:
+        return templates.TemplateResponse("faculty_gift.html", {"request": request, "error": "Guest not found"})
+
+# Update a specific guest's faculty gift status
+@app.post("/submit-guest-faculty-gift")
+async def submit_guest_faculty_gift(request: Request, guest_id: str = Form(...)):
+    guests = read_csv_data(CSV_FILE_GUESTS)
+    updated = False
+    error_message = ""
+
+    for guest in guests:
+        if guest['ID'] == guest_id:
+            if guest.get('GuestRole', '') == 'Faculty':
+                guest['IsFacultyGiftReceived'] = 'True'
+                updated = True
+                break
+            else:
+                error_message = "This guest is not eligible for a faculty gift."
+                break
+
+    if not updated and not error_message:
+        error_message = "Guest ID not found."
+
+    if error_message:
+        # Return to the same page with an error message
+        return templates.TemplateResponse("faculty_gift.html", {"request": request, "error": error_message})
+
+    fieldnames = [
+        # Ensure all required fieldnames are included
+        "ID", "Name", "Email", "Phone", "CheckIn", "CheckOut", "AmountGiven",
+        "IsCheckedIn", "IsPaymentReceived", "IsGiftReceived", "IsCarReceived", 
+        "CarNumber", "IsLunchDay1", "IsDinnerDay1", "IsLunchDay2", "IsDinnerDay2", 
+        "IsLunchDay3", "GuestRole", "IsResidential", "IsFacultyGiftReceived",
+        # Add any additional fields as needed
+    ]
+    write_csv_data(CSV_FILE_GUESTS, guests, fieldnames)
+    
+    return RedirectResponse(url="/faculty_gift?update_success=true", status_code=303)
+
+
+@app.get("/conference_certificate")
+async def conference_certificate_page(request: Request):
+    return templates.TemplateResponse("conference_certificate.html", {"request": request})
+
+@app.get("/fetch-guest-conference-certificate")
+async def fetch_guest_conference_certificate(request: Request, guest_id: str):
+    guests = read_csv_data(CSV_FILE_GUESTS)
+    guest_details = next((guest for guest in guests if guest['ID'] == guest_id), None)
+    if guest_details:
+        return templates.TemplateResponse("conference_certificate.html", {"request": request, "guest": guest_details})
+    else:
+        return templates.TemplateResponse("conference_certificate.html", {"request": request, "error": "Guest not found"})
+
+@app.post("/submit-guest-conference-certificate")
+async def submit_guest_conference_certificate(request: Request, guest_id: str = Form(...)):
+    guests = read_csv_data(CSV_FILE_GUESTS)
+    updated = False
+    error_message = ""
+
+    for guest in guests:
+        if guest['ID'] == guest_id:
+            if guest.get('GuestRole', '') in ['Faculty', 'Delegate']:  # Assuming these roles are eligible
+                guest['IsConferenceCertificateReceived'] = 'True'
+                updated = True
+                break
+            else:
+                error_message = "This guest is not eligible for a conference certificate."
+                break
+
+    if not updated and not error_message:
+        error_message = "Guest ID not found."
+
+    if error_message:
+        # Return to the same page with an error message
+        return templates.TemplateResponse("conference_certificate.html", {"request": request, "error": error_message})
+    
+    fieldnames = [
+        # Ensure all required fieldnames are included
+        "ID", "Name", "Email", "Phone", "CheckIn", "CheckOut", "AmountGiven",
+        "IsCheckedIn", "IsPaymentReceived", "IsGiftReceived", "IsCarReceived", 
+        "CarNumber", "IsLunchDay1", "IsDinnerDay1", "IsLunchDay2", "IsDinnerDay2", 
+        "IsLunchDay3", "GuestRole", "IsResidential", "IsFacultyGiftReceived",
+        # Add any additional fields as needed
+    ]
+    
+    write_csv_data(CSV_FILE_GUESTS, guests, fieldnames)
+    return RedirectResponse(url="/conference_certificate?update_success=true", status_code=303)
+
+# Display the medical council certificate management page
+@app.get("/medical_council_certificate")
+async def medical_council_certificate_page(request: Request):
+    return templates.TemplateResponse("medical_council_certificate.html", {"request": request})
+
+# Fetch a specific guest's medical council certificate status
+@app.get("/fetch-guest-medical-council-certificate")
+async def fetch_guest_medical_council_certificate(request: Request, guest_id: str):
+    guests = read_csv_data(CSV_FILE_GUESTS)
+    guest_details = next((guest for guest in guests if guest['ID'] == guest_id), None)
+    if guest_details:
+        return templates.TemplateResponse("medical_council_certificate.html", {"request": request, "guest": guest_details})
+    else:
+        return templates.TemplateResponse("medical_council_certificate.html", {"request": request, "error": "Guest not found"})
+
+# Update a specific guest's medical council certificate status
+@app.post("/submit-guest-medical-council-certificate")
+async def submit_guest_medical_council_certificate(request: Request, guest_id: str = Form(...)):
+    guests = read_csv_data(CSV_FILE_GUESTS)
+    updated = False
+
+    for guest in guests:
+        if guest['ID'] == guest_id:
+            guest['IsMedicalCouncilCertificateReceived'] = 'True'
+            updated = True
+            break
+
+    if not updated:
+        return templates.TemplateResponse("medical_council_certificate.html", {"request": request, "error": "Guest not found or not eligible for medical council certificate"})
+    
+    fieldnames = [
+        # Ensure all required fieldnames are included
+        "ID", "Name", "Email", "Phone", "CheckIn", "CheckOut", "AmountGiven",
+        "IsCheckedIn", "IsPaymentReceived", "IsGiftReceived", "IsCarReceived", 
+        "CarNumber", "IsLunchDay1", "IsDinnerDay1", "IsLunchDay2", "IsDinnerDay2", 
+        "IsLunchDay3", "GuestRole", "IsResidential", "IsFacultyGiftReceived",
+        # Add any additional fields as needed
+    ]
+    # Save the updated guest data
+    write_csv_data(CSV_FILE_GUESTS, guests, fieldnames)
+
+    return RedirectResponse(url="/medical_council_certificate?update_success=true", status_code=303)
 
 @app.get("/update-guest-name")
 async def update_guest_name_page(request: Request):
