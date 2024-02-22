@@ -321,10 +321,19 @@ def validate_and_normalize_row(row: dict, row_index: int) -> Tuple[bool, dict, L
             "value": guest_role_raw,
             "error": "Invalid guest role."
         })
-
+    
+    for field in [
+        "Email", "Phone", "CheckIn", "CheckOut", "AmountGiven",
+        "IsCheckedIn", "IsPaymentReceived", "IsGiftReceived", "IsCarReceived", "HotelName",
+        "CarNumber", "IsLunchDay1", "IsDinnerDay1", "IsLunchDay2", "IsDinnerDay2",
+        "IsLunchDay3", "GuestRole", "IsResidential", "IsFacultyGiftReceived", "IsConferenceCertificateReceived",
+        "IsMedicalCouncilCertificateReceived"
+    ]:
+        if field in row:
+            normalized_row[field] = row[field]
 
     # Generate ID if no errors found
-    if not errors:
+    if not errors and "ID" not in normalized_row:
         normalized_row["ID"] = generate_id(normalized_name, phone)  # Assuming generate_id is a function you have defined
 
     return not errors, normalized_row, errors
