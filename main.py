@@ -254,10 +254,13 @@ def validate_email(email: str) -> bool:
     return re.fullmatch(r'[^@]+@[^@]+\.[^@]+', email) is not None
 
 def generate_id(name: str, phone: str) -> str:
-    """Generate a unique ID based on the first two letters of the name and the phone number."""
+    """Generate a unique ID based on the first two letters of the name and the phone number.
+    If the phone number does not exist, generate a random 5-digit number."""
     # Extract the first two letters of the name, defaulting to 'XX' if name is too short
     prefix = re.sub(r'[^A-Za-z]', '', name[:2].upper()) if len(name) >= 2 else 'XX'
-    # Use the phone number directly in the ID
+    # Check if phone number is provided, else generate a random 5-digit number
+    if not phone:
+        phone = f"{random.randint(10000, 99999)}"
     return prefix + phone
 
 def validate_and_normalize_row(row: dict, row_index: int) -> Tuple[bool, dict, List[Dict]]:

@@ -50,7 +50,7 @@
         <!-- Display Guest Details for Lunch Coupon Day 2 Update -->
         {% if guest %}
             <div class="card mb-4">
-                <div class="card-header">Update Lunch Coupon Day 2 Status</div>
+                <div class="card-header">Update Lunch Day 2 Status</div>
                 <div class="card-body">
                     <form action="/submit-guest-lunch-day2" method="post">
                         <input type="hidden" name="guest_id" value="{{ guest.ID }}">
@@ -62,10 +62,10 @@
 
                         <!-- Lunch Day 2 Update Button -->
                         {% if guest.IsLunchDay2 == "True" %}
-                            <div class="alert alert-info">Lunch Coupon for Day 2 already given.</div>
+                            <div class="alert alert-info">Lunch for Day 2 already given.</div>
                             <button type="button" class="btn btn-danger btn-lg" disabled>X</button>
                         {% else %}
-                            <button type="submit" class="btn btn-success btn-lg">Mark Lunch Coupon Day 2 as Given</button>
+                            <button type="submit" class="btn btn-success btn-lg">Mark Lunch  Day 2 as Given</button>
                         {% endif %}
                     </form>
                 </div>

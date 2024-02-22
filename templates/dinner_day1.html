@@ -36,7 +36,7 @@
     
 
     <div class="container mt-4">
-        <h2 class="text-center mb-4">Dinner Coupon Day 1</h2>
+        <h2 class="text-center mb-4">Dinner Day 1</h2>
 
         <!-- Form for Guest ID Input -->
         <form action="/fetch-guest-dinner-day1" method="get">
@@ -50,7 +50,7 @@
         <!-- Display Guest Details for Dinner Coupon Day 1 Update -->
         {% if guest %}
             <div class="card mb-4">
-                <div class="card-header">Update Dinner Coupon Day 1 Status</div>
+                <div class="card-header">Update Dinner  Day 1 Status</div>
                 <div class="card-body">
                     <form action="/submit-guest-dinner-day1" method="post">
                         <input type="hidden" name="guest_id" value="{{ guest.ID }}">
@@ -62,10 +62,10 @@
 
                         <!-- Dinner Day 1 Update Button -->
                         {% if guest.IsDinnerDay1 == "True" %}
-                            <div class="alert alert-info">Dinner Coupon for Day 1 already given.</div>
+                            <div class="alert alert-info">Dinner  for Day 1 already given.</div>
                             <button type="button" class="btn btn-danger btn-lg" disabled>X</button>
                         {% else %}
-                            <button type="submit" class="btn btn-success btn-lg">Mark Dinner Coupon Day 1 as Given</button>
+                            <button type="submit" class="btn btn-success btn-lg">Mark Dinner  Day 1 as Given</button>
                         {% endif %}
                     </form>
                 </div>

@@ -36,7 +36,7 @@
     
 
     <div class="container mt-4">
-        <h2 class="text-center mb-4">Gift Received</h2>
+        <h2 class="text-center mb-4">Conference Gift Received</h2>
 
         <!-- Form for Guest ID Input -->
         <form action="/fetch-guest-gift" method="get">
@@ -50,7 +50,7 @@
         <!-- Display Guest Details for Gift Update -->
         {% if guest %}
             <div class="card mb-4">
-                <div class="card-header">Update Gift Status</div>
+                <div class="card-header">Update Conference Gift Status</div>
                 <div class="card-body">
                     <form action="/submit-guest-gift" method="post">
                         <input type="hidden" name="guest_id" value="{{ guest.ID }}">
@@ -63,13 +63,13 @@
                         <!-- Gift Update Button, conditional on role -->
                         {% if guest.GuestRole in ["Faculty", "Delegate", "Pgt"] %}
                             {% if guest.IsGiftReceived == "True" %}
-                                <div class="alert alert-info">Gift already received.</div>
+                                <div class="alert alert-info">Conference Gift already received.</div>
                                 <button type="button" class="btn btn-danger btn-lg" disabled>Already Received</button>
                             {% else %}
-                                <button type="submit" class="btn btn-success btn-lg">Mark Gift as Received</button>
+                                <button type="submit" class="btn btn-success btn-lg">Mark Conference Gift as Received</button>
                             {% endif %}
                         {% else %}
-                            <div class="alert alert-secondary">Not eligible for a gift.</div>
+                            <div class="alert alert-secondary">Not eligible for a Conference gift. Need to be a Faculty or Delegate or PGT</div>
                         {% endif %}
                     </form>
                 </div>
