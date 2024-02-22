@@ -254,12 +254,11 @@ def validate_email(email: str) -> bool:
     return re.fullmatch(r'[^@]+@[^@]+\.[^@]+', email) is not None
 
 def generate_id(name: str, phone: str) -> str:
-    """Generate a unique ID based on the first two letters of the name and a random 5-digit number."""
+    """Generate a unique ID based on the first two letters of the name and the phone number."""
     # Extract the first two letters of the name, defaulting to 'XX' if name is too short
     prefix = re.sub(r'[^A-Za-z]', '', name[:2].upper()) if len(name) >= 2 else 'XX'
-    # Generate a random 5-digit number as a string
-    random_number = f"{random.randint(100, 999999):06d}"
-    return prefix + random_number
+    # Use the phone number directly in the ID
+    return prefix + phone
 
 def validate_and_normalize_row(row: dict, row_index: int) -> Tuple[bool, dict, List[Dict]]:
     """Validate and normalize a row of CSV data."""
@@ -332,9 +331,12 @@ def validate_and_normalize_row(row: dict, row_index: int) -> Tuple[bool, dict, L
         if field in row:
             normalized_row[field] = row[field]
 
-    # Generate ID if no errors found
-    if not errors and "ID" not in normalized_row:
-        normalized_row["ID"] = generate_id(normalized_name, phone)  # Assuming generate_id is a function you have defined
+    # Check if ID exists in the input row and use it if present, otherwise generate a new one
+    if "ID" in row and row["ID"].strip():
+        normalized_row["ID"] = row["ID"].strip()
+    elif not errors:
+        # Generate ID if no errors found and ID does not exist in the input
+        normalized_row["ID"] = generate_id(name, row.get("Phone", "").strip())
 
     return not errors, normalized_row, errors
 
