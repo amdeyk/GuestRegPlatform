@@ -25,6 +25,7 @@ from fastapi.responses import JSONResponse
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from io import BytesIO
 import random
+import zipfile  # Importing the zipfile module
 
 #/home/ubuntu/guest/GuestRegPlatform   /home/ubuntu/.local/bin/uvicorn main:app --host 0.0.0.0 --port 8002
 # Initialize FastAPI app, configure template directory, and serve static files.
@@ -1053,6 +1054,78 @@ async def generate_barcode(request: Request, user_id: str = Form(...)):
         'Content-Disposition': f'attachment; filename="{filename}"'
     }
     return StreamingResponse(final_io, media_type="image/png", headers=headers)
+
+
+@app.post("/generate-all-barcodes")
+async def generate_all_barcodes(password: str = Form(...)):
+    # Check if the password is correct
+    if password != "QUBIX":
+        raise HTTPException(status_code=401, detail="Unauthorized Access = PLEASE GO BACK TO MAIN PAGE")
+    guests = read_csv_data(CSV_FILE_GUESTS)
+    zip_io = BytesIO()
+    with zipfile.ZipFile(zip_io, mode='w', compression=zipfile.ZIP_DEFLATED) as temp_zip:
+        for guest in guests:
+            # Re-use the barcode generation logic here for each guest
+            # Generate the barcode image
+            guest_role = guest.get('GuestRole', 'Delegate')  # Default to 'Delegate' if not found
+
+            # Select the appropriate background image based on the guest role
+            background_image_path = BACKGROUND_IMAGES.get(guest_role, BACKGROUND_IMAGES['Delegate'])
+            if not os.path.exists(background_image_path):
+                return {"error": "Background image not found"}
+            
+            main_image = Image.open(background_image_path)
+            draw = ImageDraw.Draw(main_image)
+            
+            # Define fonts
+            font_bold = ImageFont.truetype(FONT_PATH_BOLD, 70)
+            font_regular = ImageFont.truetype(FONT_PATH_REGULAR, 55)
+            
+            # Generate and add barcode
+            barcode_io = BytesIO()
+            barcode = Code128(guest['ID'], writer=ImageWriter())
+            barcode.write(barcode_io)
+            barcode_io.seek(0)
+            barcode_image = Image.open(barcode_io)
+            
+            # Resize barcode and paste it onto the main image
+            barcode_size = (600, 300)  # Adjust barcode size as needed
+            barcode_image_resized = barcode_image.resize(barcode_size)
+            main_image_width, main_image_height = main_image.size
+            barcode_x = (main_image_width - barcode_size[0]) // 2
+            barcode_y = main_image_height - barcode_size[1] - 350  # Adjust as needed
+            main_image.paste(barcode_image_resized, (barcode_x, barcode_y))
+
+            # Add guest name and designation
+            name_text_width = draw.textlength(guest['Name'], font=font_bold)
+            name_x = (main_image_width - name_text_width) // 2
+            name_y = barcode_y + 330  # Adjust spacing above the barcode as needed
+            draw.text((name_x, name_y), guest['Name'], fill="black", font=font_bold)
+
+            # Center-align guest designation with lines
+            designation_text_width = draw.textlength(guest['GuestRole'], font=font_regular)
+            designation_x = (main_image_width - designation_text_width) // 2
+            designation_y = name_y + 100  # Adjust spacing below the name as needed
+            draw.text((designation_x, designation_y), guest['GuestRole'], fill="black", font=font_regular)    
+            
+            # Draw lines on either side of the designation
+            line_length = 200  # Adjust as needed
+            line_spacing = 15  # Space between line and text
+            line_y = designation_y + font_regular.size -15  # Adjust vertical position as needed
+
+            draw.line((designation_x - line_length - line_spacing, line_y, designation_x - line_spacing, line_y), fill="black", width=10)
+            draw.line((designation_x + designation_text_width + line_spacing, line_y, designation_x + designation_text_width + line_length + line_spacing, line_y), fill="black", width=10)
+            temp_image_io = BytesIO()
+            # Assume barcode generation code here, similar to above but using temp_image_io
+            temp_image_io.seek(0)
+            filename = f"{guest['ID']}_{guest['Name']}_{guest['GuestRole']}_barcode.png"
+            temp_zip.writestr(filename, temp_image_io.getvalue())
+
+    zip_io.seek(0)
+    headers = {
+        'Content-Disposition': 'attachment; filename="all_guest_barcodes.zip"'
+    }
+    return StreamingResponse(zip_io, media_type='application/zip', headers=headers)
 
 @app.post("/update-guest-info-scan")
 async def update_guest_information(update_data: GuestUpdate):

@@ -95,6 +95,8 @@
                             </select>
                         </div>
                         <button type="submit" class="btn btn-success">Generate Barcode</button>
+                        <div style="height: 3rem;"></div> <!-- Adjust the height as needed -->
+                        <button type="button" class="btn btn-danger" onclick="requestAllBarcodes()">Generate Barcodes for All Guests - PROTECTED</button>
                     </form>
                 </div>
             </div>
@@ -143,5 +145,38 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script>
+    function requestAllBarcodes() {
+        const password = prompt("Please enter the password:");
+        if (password !== null && password !== "") {
+            // Send the password and request to the server
+            fetch('/generate-all-barcodes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `password=${encodeURIComponent(password)}`
+            })
+            .then(response => {
+                if(response.ok) {
+                    return response.blob();
+                }
+                throw new Error('Unauthorized or error occurred');
+            })
+            .then(blob => {
+                // Create a URL for the blob
+                const url = window.URL.createObjectURL(blob);
+                // Create a link to download the zip
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "all_guest_barcodes.zip";
+                document.body.appendChild(a); // We need to add the element to the dom -> (invisible) so we can click it
+                a.click(); // simulate click to start download
+                a.remove(); // remove the element again
+            })
+            .catch(error => alert("Error: " + error.message));
+        }
+    }
+    </script>
 </body>
 </html>
