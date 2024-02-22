@@ -1058,7 +1058,6 @@ async def generate_barcode(request: Request, user_id: str = Form(...)):
 
 @app.post("/generate-all-barcodes")
 async def generate_all_barcodes(password: str = Form(...)):
-    # Check if the password is correct
     if password != "QUBIX":
         raise HTTPException(status_code=401, detail="Unauthorized Access = PLEASE GO BACK TO MAIN PAGE")
     guests = read_csv_data(CSV_FILE_GUESTS)
@@ -1115,9 +1114,12 @@ async def generate_all_barcodes(password: str = Form(...)):
 
             draw.line((designation_x - line_length - line_spacing, line_y, designation_x - line_spacing, line_y), fill="black", width=10)
             draw.line((designation_x + designation_text_width + line_spacing, line_y, designation_x + designation_text_width + line_length + line_spacing, line_y), fill="black", width=10)
+            # Correctly save the customized main_image to temp_image_io
             temp_image_io = BytesIO()
-            # Assume barcode generation code here, similar to above but using temp_image_io
-            temp_image_io.seek(0)
+            main_image.save(temp_image_io, format='PNG')
+            temp_image_io.seek(0)  # Seek back to the start of the buffer
+            
+            # Now, write this buffer to the ZIP file
             filename = f"{guest['ID']}_{guest['Name']}_{guest['GuestRole']}_barcode.png"
             temp_zip.writestr(filename, temp_image_io.getvalue())
 
