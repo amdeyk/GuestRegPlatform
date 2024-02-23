@@ -1002,7 +1002,7 @@ async def generate_barcode(request: Request, user_id: str = Form(...)):
         guest_name = "DR. " + guest_name
 
     # Select the appropriate background image based on the guest role
-    background_image_path = BACKGROUND_IMAGES.get(guest_role, BACKGROUND_IMAGES['Delegate'])
+    background_image_path = BACKGROUND_IMAGES.get(guest_role, BACKGROUND_IMAGES['DELEGATE'])
     if not os.path.exists(background_image_path):
         return {"error": "Background image not found"}
     
