@@ -1010,8 +1010,8 @@ async def generate_barcode(request: Request, user_id: str = Form(...)):
     draw = ImageDraw.Draw(main_image)
     
     # Define fonts
-    font_bold = ImageFont.truetype(FONT_PATH_BOLD, 70)
-    font_regular = ImageFont.truetype(FONT_PATH_REGULAR, 55)
+    font_bold = ImageFont.truetype(FONT_PATH_BOLD, 60)
+    font_regular = ImageFont.truetype(FONT_PATH_REGULAR, 50)
     
     # Generate and add barcode
     barcode_io = BytesIO()
