@@ -1084,14 +1084,12 @@ async def generate_all_barcodes(password: str = Form(...)):
             if guest_role in ['DELEGATE', 'FACULTY', 'PGT']:
                 guest_name = "DR. " + guest_name
             
-            if guest_role in ['PGT']:
-                guest_role = 'RESIDENT DELEGATE'
             
             # Continue with the rest of the barcode generation logic...
             background_image_path = BACKGROUND_IMAGES.get(guest_role, BACKGROUND_IMAGES['DELEGATE'])
             if not os.path.exists(background_image_path):
                 return {"error": "Background image not found"}
-            
+     
                 
             if guest_role in ['PGT']:
                 guest_role = 'RESIDENT DELEGATE'
@@ -1125,13 +1123,13 @@ async def generate_all_barcodes(password: str = Form(...)):
             name_text_width = draw.textlength(guest_name, font=font_bold)
             name_x = (main_image_width - name_text_width) // 2
             name_y = barcode_y + 330  # Adjust spacing above the barcode as needed
-            draw.text((name_x, name_y), guest['Name'], fill="black", font=font_bold)
+            draw.text((name_x, name_y), guest_name, fill="black", font=font_bold)
 
             # Center-align guest designation with lines
             designation_text_width = draw.textlength(guest_role, font=font_regular)
             designation_x = (main_image_width - designation_text_width) // 2
             designation_y = name_y + 100  # Adjust spacing below the name as needed
-            draw.text((designation_x, designation_y), guest['GuestRole'], fill="black", font=font_regular)    
+            draw.text((designation_x, designation_y), guest_role, fill="black", font=font_regular)    
             
             # Draw lines on either side of the designation
             line_length = 200  # Adjust as needed
