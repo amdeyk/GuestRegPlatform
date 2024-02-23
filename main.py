@@ -994,7 +994,12 @@ async def generate_barcode(request: Request, user_id: str = Form(...)):
         # Handle case where guest ID is not found
         return {"error": "Guest ID not found"}
 
-    guest_role = guest.get('GuestRole', 'Delegate')  # Default to 'Delegate' if not found
+    guest_name = guest['Name'].upper()  # Capitalize the guest name
+    guest_role = guest.get('GuestRole', 'Delegate').upper()  # Capitalize the role, default to 'Delegate' if not found
+
+    # Prefix guest name with "DR." if the role is Delegate, Faculty, or PGT
+    if guest_role in ['DELEGATE', 'FACULTY', 'PGT']:
+        guest_name = "DR. " + guest_name
 
     # Select the appropriate background image based on the guest role
     background_image_path = BACKGROUND_IMAGES.get(guest_role, BACKGROUND_IMAGES['Delegate'])
@@ -1024,16 +1029,16 @@ async def generate_barcode(request: Request, user_id: str = Form(...)):
     main_image.paste(barcode_image_resized, (barcode_x, barcode_y))
 
     # Add guest name and designation
-    name_text_width = draw.textlength(guest['Name'], font=font_bold)
+    name_text_width = draw.textlength(guest_name, font=font_bold)
     name_x = (main_image_width - name_text_width) // 2
     name_y = barcode_y + 330  # Adjust spacing above the barcode as needed
-    draw.text((name_x, name_y), guest['Name'], fill="black", font=font_bold)
+    draw.text((name_x, name_y), guest_name, fill="black", font=font_bold)
 
     # Center-align guest designation with lines
-    designation_text_width = draw.textlength(guest['GuestRole'], font=font_regular)
+    designation_text_width = draw.textlength(guest_role, font=font_regular)
     designation_x = (main_image_width - designation_text_width) // 2
     designation_y = name_y + 100  # Adjust spacing below the name as needed
-    draw.text((designation_x, designation_y), guest['GuestRole'], fill="black", font=font_regular)    
+    draw.text((designation_x, designation_y), guest_role, fill="black", font=font_regular)     
     
     # Draw lines on either side of the designation
     line_length = 200  # Adjust as needed
