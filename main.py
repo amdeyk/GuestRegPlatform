@@ -1000,7 +1000,7 @@ async def generate_barcode(request: Request, user_id: str = Form(...)):
     # Prefix guest name with "DR." if the role is Delegate, Faculty, or PGT
     if guest_role in ['DELEGATE', 'FACULTY', 'PGT']:
         guest_name = "DR. " + guest_name
-
+    print(f"Guest role before accessing dictionary: {guest_role}")
     # Select the appropriate background image based on the guest role
     background_image_path = BACKGROUND_IMAGES.get(guest_role, BACKGROUND_IMAGES['DELEGATE'])
     if not os.path.exists(background_image_path):
