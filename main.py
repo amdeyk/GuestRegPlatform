@@ -1078,7 +1078,7 @@ async def generate_all_barcodes(password: str = Form(...)):
                 guest_name = "DR. " + guest_name
 
             # Continue with the rest of the barcode generation logic...
-            background_image_path = BACKGROUND_IMAGES.get(guest_role, BACKGROUND_IMAGES['Delegate'])
+            background_image_path = BACKGROUND_IMAGES.get(guest_role, BACKGROUND_IMAGES['DELEGATE'])
             if not os.path.exists(background_image_path):
                 return {"error": "Background image not found"}
             
