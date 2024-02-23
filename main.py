@@ -38,11 +38,11 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Paths to background images for each role
 BACKGROUND_IMAGES = {
-    "Delegate": "./static/delegate.jpg",
-    "Faculty": "./static/faculty.jpg",
-    "Industry": "./static/industry.jpg",
-    "Pgt": "./static/pgt.jpg",
-    "Event": "./static/event.jpg",
+    "DELEGAE": "./static/delegate.jpg",
+    "FACULTY": "./static/faculty.jpg",
+    "INDUSTRY": "./static/industry.jpg",
+    "PGT": "./static/pgt.jpg",
+    "EVENT": "./static/event.jpg",
 }
 #
 # Adjust paths as necessary
