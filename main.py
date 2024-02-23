@@ -1069,11 +1069,15 @@ async def generate_all_barcodes(password: str = Form(...)):
     zip_io = BytesIO()
     with zipfile.ZipFile(zip_io, mode='w', compression=zipfile.ZIP_DEFLATED) as temp_zip:
         for guest in guests:
-            # Re-use the barcode generation logic here for each guest
-            # Generate the barcode image
-            guest_role = guest.get('GuestRole', 'Delegate')  # Default to 'Delegate' if not found
+            # Process guest name and role according to the specified rules
+            guest_name = guest['Name'].upper()  # Capitalize the name
+            guest_role = guest.get('GuestRole', 'Delegate').upper()  # Default to 'Delegate' if not found and capitalize the role
 
-            # Select the appropriate background image based on the guest role
+            # Prefix with "DR." if the role is Delegate, Faculty, or PGT
+            if guest_role in ['DELEGATE', 'FACULTY', 'PGT']:
+                guest_name = "DR. " + guest_name
+
+            # Continue with the rest of the barcode generation logic...
             background_image_path = BACKGROUND_IMAGES.get(guest_role, BACKGROUND_IMAGES['Delegate'])
             if not os.path.exists(background_image_path):
                 return {"error": "Background image not found"}
@@ -1082,8 +1086,8 @@ async def generate_all_barcodes(password: str = Form(...)):
             draw = ImageDraw.Draw(main_image)
             
             # Define fonts
-            font_bold = ImageFont.truetype(FONT_PATH_BOLD, 70)
-            font_regular = ImageFont.truetype(FONT_PATH_REGULAR, 55)
+            font_bold = ImageFont.truetype(FONT_PATH_BOLD, 60)
+            font_regular = ImageFont.truetype(FONT_PATH_REGULAR, 50)
             
             # Generate and add barcode
             barcode_io = BytesIO()
@@ -1125,7 +1129,7 @@ async def generate_all_barcodes(password: str = Form(...)):
             temp_image_io.seek(0)  # Seek back to the start of the buffer
             
             # Now, write this buffer to the ZIP file
-            filename = f"{guest['ID']}_{guest['Name']}_{guest['GuestRole']}_barcode.png"
+            filename = f"{guest['ID']}_{guest_name}_{guest_role}_barcode.png"
             temp_zip.writestr(filename, temp_image_io.getvalue())
 
     zip_io.seek(0)
