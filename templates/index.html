@@ -59,6 +59,149 @@
         <h2>Welcome to Guest Management System of</h2>
         <h1><img src="static/AROI-LOGO.png" alt="AROI Logo" style="height: 200px;"> WB AROI CON 2024</h1>
     </div>
+    
+    <!-- Summary Report Section -->
+    <section class="my-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Event Summary Report</h2>
+            <div class="row text-center">
+                <!-- Total Guests -->
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Guests</h5>
+                            <p class="card-text" id="total-guests"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Guests Checked In -->
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Guests Checked In</h5>
+                            <p class="card-text" id="guests-checked-in"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Payments Completed -->
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Payments Completed</h5>
+                            <p class="card-text" id="payments-completed"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Gifts Received -->
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Gifts Received</h5>
+                            <p class="card-text" id="gifts-received"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Additional categories here -->
+                <!-- For brevity, I'll show just one additional example -->
+                <!-- Cars Received -->
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Cars Received</h5>
+                            <p class="card-text" id="cars-received"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- You can add more divs for lunch days, faculty gifts, certificates, etc. -->
+                <!-- Lunch Day 1 -->
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Lunch Day 1</h5>
+                            <p class="card-text" id="lunch-day1"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add more sections for other fields like Dinner Day 1, Lunch Day 2, etc. -->
+            </div>
+        </div>
+        <div class="container">
+        <div class="row text-center">
+        <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Dinner Day 1</h5>
+                        <p class="card-text" id="dinner-day1"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lunch Day 2 -->
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Lunch Day 2</h5>
+                        <p class="card-text" id="lunch-day2"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dinner Day 2 -->
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Dinner Day 2</h5>
+                        <p class="card-text" id="dinner-day2"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lunch Day 3 -->
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Lunch Day 3</h5>
+                        <p class="card-text" id="lunch-day3"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faculty Gifts Received -->
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Faculty Gifts Received</h5>
+                        <p class="card-text" id="faculty-gifts-received"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conference Certificates Received -->
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Conference Certificates Received</h5>
+                        <p class="card-text" id="conference-certificates-received"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Council Certificates Received -->
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Medical Council Certificates Received</h5>
+                        <p class="card-text" id="medical-council-certificates-received"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    <div style="height: 7rem;"></div> <!-- Adjust the height as needed -->
+    </section>
+    
 
     <footer class="mt-5">
         <div class="container text-center">
@@ -71,5 +214,28 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch('/api/summary-report')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('total-guests').textContent = data.totalGuests;
+                document.getElementById('guests-checked-in').textContent = data.guestsCheckedIn;
+                document.getElementById('payments-completed').textContent = data.paymentsCompleted;
+                document.getElementById('gifts-received').textContent = data.giftsReceived;
+                document.getElementById('cars-received').textContent = data.carsReceived;
+                document.getElementById('lunch-day1').textContent = data.lunchDay1;
+                document.getElementById('dinner-day1').textContent = data.dinnerDay1;
+                document.getElementById('lunch-day2').textContent = data.lunchDay2;
+                document.getElementById('dinner-day2').textContent = data.dinnerDay2;
+                document.getElementById('lunch-day3').textContent = data.lunchDay3;
+                document.getElementById('faculty-gifts-received').textContent = data.facultyGiftsReceived;
+                document.getElementById('conference-certificates-received').textContent = data.conferenceCertificatesReceived;
+                document.getElementById('medical-council-certificates-received').textContent = data.medicalCouncilCertificatesReceived;
+            })
+            .catch(error => console.error('Error fetching summary report:', error));
+    });
+    </script>
+
 </body>
 </html>

@@ -154,7 +154,46 @@ def integrity_test_passed(original_guests, updated_guests):
     # If all checks pass, return True
     return True
 
+def calculate_summary() -> Dict[str, int]:
+    summary = {
+        "totalGuests": 0,
+        "guestsCheckedIn": 0,
+        "paymentsCompleted": 0,
+        "giftsReceived": 0,
+        "carsReceived": 0,
+        "lunchDay1": 0,
+        "dinnerDay1": 0,
+        "lunchDay2": 0,
+        "dinnerDay2": 0,
+        "lunchDay3": 0,
+        "facultyGiftsReceived": 0,
+        "conferenceCertificatesReceived": 0,
+        "medicalCouncilCertificatesReceived": 0,
+    }
+    
+    with open("data/guests.csv", mode='r', newline='', encoding='utf-8-sig') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            summary["totalGuests"] += 1
+            summary["guestsCheckedIn"] += row["IsCheckedIn"] == "True"
+            summary["paymentsCompleted"] += row["IsPaymentReceived"] == "True"
+            summary["giftsReceived"] += row["IsGiftReceived"] == "True"
+            summary["carsReceived"] += row["IsCarReceived"] == "True"
+            summary["lunchDay1"] += row["IsLunchDay1"] == "True"
+            summary["dinnerDay1"] += row["IsDinnerDay1"] == "True"
+            summary["lunchDay2"] += row["IsLunchDay2"] == "True"
+            summary["dinnerDay2"] += row["IsDinnerDay2"] == "True"
+            summary["lunchDay3"] += row["IsLunchDay3"] == "True"
+            summary["facultyGiftsReceived"] += row["IsFacultyGiftReceived"] == "True"
+            summary["conferenceCertificatesReceived"] += row["IsConferenceCertificateReceived"] == "True"
+            summary["medicalCouncilCertificatesReceived"] += row["IsMedicalCouncilCertificateReceived"] == "True"
+    
+    return summary
 
+@app.get("/api/summary-report")
+async def summary_report():
+    data = calculate_summary()
+    return data
 
 
 @app.get("/static/style.css")
