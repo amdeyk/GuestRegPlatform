@@ -1,3 +1,18 @@
+Update as on 25th Feb
+- ID card integration has been done . Background needs to be loaded and it will give
+- also Batch download of ID card has been done
+- Normal Conference Gift rules have been updated to be given to Delegates / Faculty and PGT
+- In the ID right now Resident Delegate is being mentioned. And Event Team has been named as Organziers
+
+Extensions Planned : 
+- Guest Registration as an Independent Route 
+- Hotel and Flight Planning and Recording
+- Scientific Program integration needs to be done 
+- Major Update : QR Code Integration - As it will require complete overhaul maybe
+- Templating of the Top header Banner and Footer
+- Design of the Website 
+- Migration Out of AWS
+
 Update as on 20th Feb 
 - Faculty specific Gift has been added
 - PGT Delegate Faculty and Industry has been added
