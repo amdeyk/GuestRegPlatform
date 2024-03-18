@@ -189,7 +189,7 @@ def calculate_summary() -> Dict[str, int]:
             summary["medicalCouncilCertificatesReceived"] += row["IsMedicalCouncilCertificateReceived"] == "True"
     
     return summary
-
+  
 @app.get("/api/summary-report")
 async def summary_report():
     data = calculate_summary()

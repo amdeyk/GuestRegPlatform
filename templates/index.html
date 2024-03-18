@@ -6,6 +6,7 @@
     <title>Conference Guest Management System</title>
     <link rel="stylesheet" href="/static/style.css">
     <!-- Bootstrap CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
         .welcome-banner {
@@ -61,6 +62,17 @@
     </div>
     
     <!-- Summary Report Section -->
+    <section class="my-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Event Summary Histogram</h2>
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <canvas id="summaryHistogram"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="my-5">
         <div class="container">
             <h2 class="text-center mb-4">Event Summary Report</h2>
@@ -236,6 +248,94 @@
             .catch(error => console.error('Error fetching summary report:', error));
     });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+        fetch('/api/summary-report')
+            .then(response => response.json())
+            .then(data => {
+                // Fetch the summary data
+                var ctx = document.getElementById('summaryHistogram').getContext('2d');
+                var summaryHistogram = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: [
+                            'Total Guests',
+                            'Guests Checked In',
+                            'Payments Completed',
+                            'Gifts Received',
+                            'Cars Received',
+                            'Lunch Day 1',
+                            'Dinner Day 1',
+                            'Lunch Day 2',
+                            'Dinner Day 2',
+                            'Lunch Day 3',
+                            'Faculty Gifts Received',
+                            'Conference Certificates Received',
+                            'Medical Council Certificates Received'
+                        ],
+                        datasets: [{
+                            label: 'Count',
+                            data: [
+                                data.totalGuests,
+                                data.guestsCheckedIn,
+                                data.paymentsCompleted,
+                                data.giftsReceived,
+                                data.carsReceived,
+                                data.lunchDay1,
+                                data.dinnerDay1,
+                                data.lunchDay2,
+                                data.dinnerDay2,
+                                data.lunchDay3,
+                                data.facultyGiftsReceived,
+                                data.conferenceCertificatesReceived,
+                                data.medicalCouncilCertificatesReceived
+                            ],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgba(199, 199, 199, 0.2)',
+                                'rgba(83, 102, 255, 0.2)',
+                                'rgba(40, 159, 64, 0.2)',
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)',
+                                'rgba(199, 199, 199, 1)',
+                                'rgba(83, 102, 255, 1)',
+                                'rgba(40, 159, 64, 1)',
+                                'rgba(255,99,132,1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching summary report:', error));
+    });
+    </script>
+
 
 </body>
 </html>
