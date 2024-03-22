@@ -26,12 +26,20 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 from io import BytesIO
 import random
 import zipfile  # Importing the zipfile module
+from fastapi.middleware.cors import CORSMiddleware
 
 #/home/ubuntu/guest/GuestRegPlatform   /home/ubuntu/.local/bin/uvicorn main:app --host 0.0.0.0 --port 8002
 # Initialize FastAPI app, configure template directory, and serve static files.
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # This is for example purposes. In production, replace "*" with your actual domain.
+    allow_credentials=True,
+    allow_methods=["*"],  # Or specify just the methods you need: ["GET", "POST", etc.]
+    allow_headers=["*"],
+)
 
 # Pydantic models define the structure of requests for data validation and serialization.
 # These models ensure valid data is received and sent in API requests, enhancing data integrity.
